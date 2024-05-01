@@ -1,0 +1,17 @@
+# Compiled class files
+*.class
+
+# Package files
+*.jar
+*.war
+*.ear
+
+# IDE-specific files and directories
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# Build output directories
+target/
+out/

@@ -1,0 +1,155 @@
+package Models.Personnel;
+
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.Arrays;
+import java.util.UUID;
+
+import CustomExceptions.NegativeNumberException;
+import CustomExceptions.NullOrEmptyStringException;
+import Extensions.StringExtensions;
+import UserInteractor.Interactable;
+
+enum Gender {
+    Male,
+    Female,
+    Others
+}
+
+public abstract class Personnel {
+    private static final int CURRENT_YEAR = LocalDate.now().getYear();
+    private static final int DAY_IN_CURRENT_MONTH = java.time.LocalDate.now().lengthOfMonth();
+
+    private String id;
+    private String fullName;
+    private int yearOfBirth;
+    private Gender gender;
+    private BigDecimal dailySalary = BigDecimal.valueOf(100);
+    private int noOfWorkingDays;
+
+    protected Interactable interactor;
+
+    public Personnel(Interactable interactor) {
+        setId();
+        this.interactor = interactor;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    private void setId() {
+        id = UUID.randomUUID().toString();
+    }
+
+    public String getFullName() {
+        return fullName;
+    }
+
+    public void setFullName(String fullName) {
+        if (StringExtensions.isNullOrEmpty(fullName)) {
+            throw new NullOrEmptyStringException("Full Name");
+        }
+        this.fullName = fullName;
+    }
+
+    public int getYearOfBirth() {
+        return yearOfBirth;
+    }
+
+    public void setYearOfBirth(int yearOfBirth) {
+        if (yearOfBirth > CURRENT_YEAR) {
+            throw new IllegalArgumentException("Year of Birth cannot be in the future!");
+        }
+        this.yearOfBirth = yearOfBirth;
+    }
+
+    public String getGender() {
+        return genderMapperEnumToString(gender);
+    }
+
+    public void setGender(String gender) {
+        this.gender = genderMapperStringToEnum(gender);
+    }
+
+    public BigDecimal getDailySalary() {
+        return dailySalary;
+    }
+
+    public void setDailySalary(BigDecimal dailySalary) {
+        if (dailySalary.compareTo(BigDecimal.ZERO) < 0) {
+            throw new NegativeNumberException("Daily Salary");
+        }
+        this.dailySalary = dailySalary;
+    }
+
+    public int getNoOfWorkingDays() {
+        return noOfWorkingDays;
+    }
+
+    public void setNoOfWorkingDays(int noOfWorkingDays) {
+        if (noOfWorkingDays < 0) {
+            throw new NegativeNumberException("Number of working days");
+        }
+
+        if (noOfWorkingDays > DAY_IN_CURRENT_MONTH) {
+            throw new IllegalArgumentException("Total days of current month: " + DAY_IN_CURRENT_MONTH +
+                    "Number of working days for this month cannot exceed " + DAY_IN_CURRENT_MONTH + "days!");
+        }
+
+        this.noOfWorkingDays = noOfWorkingDays;
+    }
+
+    @Override
+    public String toString() {
+        return String.join("\n",
+                "Full Name: " + fullName,
+                "Id: " + id,
+                "Year of Birth: " + yearOfBirth,
+                "Gender: " + genderMapperEnumToString(gender),
+                "Daily Salary: " + dailySalary.toPlainString(),
+                "Number of Working Days: " + noOfWorkingDays);
+    }
+
+    protected void enter() {
+        setFullName(
+                interactor.readLine("Full Name: "));
+        setYearOfBirth(interactor.readInt("Year of birth: "));
+        setGender(interactor.readLine("Gender (m/f/others): "));
+        setDailySalary(interactor.readBigDecimal("Daily salary: "));
+        setNoOfWorkingDays(interactor.readInt("Number of working days: "));
+    }
+
+    public BigDecimal calculateMonthlySalary() {
+        return dailySalary.multiply(BigDecimal.valueOf(noOfWorkingDays));
+    }
+
+    private String genderMapperEnumToString(Gender gender) {
+        return switch (gender) {
+            case Male -> "Male.";
+            case Female -> "Female.";
+            default -> "Prefer to to say.";
+        };
+    }
+
+    private Gender genderMapperStringToEnum(String genderStr) {
+        if (StringExtensions.isNullOrEmpty(genderStr)) {
+            return Gender.Others;
+        }
+
+        String valueStr = String.join("", genderStr.split("\\s+")).toLowerCase();
+
+        String[] maleStrings = new String[] { "m", "male" };
+        if (Arrays.stream(maleStrings).anyMatch(str -> str.equals(valueStr))) {
+            return Gender.Male;
+        }
+
+        String[] femaleStrings = new String[] { "f", "female" };
+        if (Arrays.stream(femaleStrings).anyMatch(str -> str.equals(valueStr))) {
+            return Gender.Female;
+        }
+
+        return Gender.Others;
+    }
+
+}
