@@ -16,8 +16,7 @@ public class DepartmentManager extends Personnel {
     private CompanyService service;
 
     public DepartmentManager(Interactable interactor, CompanyService service) {
-        super(interactor);
-        this.service = service;
+        super(interactor, service);
         this.setDailySalary(BigDecimal.valueOf(200));
     }
 
@@ -92,19 +91,21 @@ public class DepartmentManager extends Personnel {
         }
     }
 
+    @Override
     public void delete() {
         // Reset all employees manager id to null
         if (totalManagedEmployees > 0) {
+            List<Personnel> personnels = service.getPersonnels();
             for (Employee employee : managedEmployees) {
+                personnels.removeIf(p -> p.getId().equals(employee.getId()));
                 employee.setManagerId(service, null, true);
+                personnels.add(employee);
             }
+
+            service.savePersonnels(personnels);
         }
 
         // Remove this Personnel in data repository
-        boolean hasBeenRemoved = service.removePersonnel(getId());
-        if (hasBeenRemoved) {
-            interactor.displayMessage(
-                    "Department Manager " + getFullName() + " with ID: " + getId() + " has been removed successfully!");
-        }
+        super.delete();
     }
 }

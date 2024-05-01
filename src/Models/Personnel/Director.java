@@ -3,13 +3,14 @@ package Models.Personnel;
 import java.math.BigDecimal;
 
 import Models.Company.Company;
+import Services.CompanyManagement.CompanyService;
 import UserInteractor.Interactable;
 
 public class Director extends Personnel {
     private double sharePercentage;
 
-    public Director(Interactable interactor) {
-        super(interactor);
+    public Director(Interactable interactor, CompanyService service) {
+        super(interactor, service);
         this.setDailySalary(BigDecimal.valueOf(300));
     }
 

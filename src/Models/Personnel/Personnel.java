@@ -8,6 +8,7 @@ import java.util.UUID;
 import CustomExceptions.NegativeNumberException;
 import CustomExceptions.NullOrEmptyStringException;
 import Extensions.StringExtensions;
+import Services.CompanyManagement.CompanyService;
 import UserInteractor.Interactable;
 
 enum Gender {
@@ -28,10 +29,12 @@ public abstract class Personnel {
     private int noOfWorkingDays;
 
     protected Interactable interactor;
+    protected CompanyService service;
 
-    public Personnel(Interactable interactor) {
+    public Personnel(Interactable interactor, CompanyService service) {
         setId();
         this.interactor = interactor;
+        this.service = service;
     }
 
     public String getId() {
@@ -122,6 +125,15 @@ public abstract class Personnel {
 
     public BigDecimal calculateMonthlySalary() {
         return dailySalary.multiply(BigDecimal.valueOf(noOfWorkingDays));
+    }
+
+    public void delete(){
+        // Remove this Personnel in data repository
+        boolean hasBeenRemoved = service.removePersonnel(getId());
+        if (hasBeenRemoved) {
+            interactor.displayMessage(
+                    "Department Manager " + getFullName() + " with ID: " + getId() + " has been removed successfully!");
+        }
     }
 
     private String genderMapperEnumToString(Gender gender) {

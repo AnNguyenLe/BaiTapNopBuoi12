@@ -34,4 +34,9 @@ public class CompanyManagementService implements CompanyService {
     public boolean removePersonnel(String personnelId){
         return personnels.removeIf(p -> p.getId() == personnelId);
     }
+
+    public Personnel findPersonnel(Predicate<Personnel> predicate){
+        Optional<Personnel> p = personnels.stream().filter(predicate).findFirst();
+        return p.equals(null) ? null : p.get();
+    }
 }

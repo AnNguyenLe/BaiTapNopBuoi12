@@ -10,4 +10,5 @@ public interface CompanyService {
     void savePersonnels(List<Personnel> personnels);
     Class<?> findPersonnelType(Predicate<Personnel> predicate);
     boolean removePersonnel(String personnelId);
+    Personnel findPersonnel(Predicate<Personnel> predicate);
 }

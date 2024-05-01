@@ -1,5 +1,7 @@
 package Models.Personnel;
 
+import java.util.List;
+
 import Services.CompanyManagement.CompanyService;
 import UserInteractor.Interactable;
 
@@ -8,8 +10,7 @@ public class Employee extends Personnel {
     private CompanyService service;
 
     public Employee(Interactable interactor, CompanyService service) {
-        super(interactor);
-        this.service = service;
+        super(interactor, service);
     }
 
     public String getManagerId() {
@@ -51,8 +52,23 @@ public class Employee extends Personnel {
                 "ID of manager: " + managerId);
     }
 
+    @Override
+    public void delete(){
+        // Update manager's managed employees list
+        Personnel personnel = service.findPersonnel(p -> p.getId().equals(managerId));
+        if (personnel != null) {
+            DepartmentManager manager = (DepartmentManager)personnel;
+            List<Employee> managedEmployees = manager.getManagedEmployees();
+            managedEmployees.removeIf(p -> p.getId().equals(getId()));
+            manager.setManagedEmployees(managedEmployees);
+        }
+
+        // Remove this Personnel in data repository
+        super.delete();
+    }
+
     private boolean ValidateManagerId(CompanyService service, String managerId) {
-        Class<?> manager = service.findPersonnelType(p -> p.getId() == managerId);
+        Class<?> manager = service.findPersonnelType(p -> p.getId().equals(managerId));
         return manager.equals(DepartmentManager.class);
     }
 }
