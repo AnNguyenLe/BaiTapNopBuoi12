@@ -12,12 +12,14 @@ public class DepartmentManager extends Personnel {
     private int totalManagedEmployees;
 
     private List<Employee> managedEmployees;
+    private List<Personnel> personnels;
 
     private CompanyService service;
 
     public DepartmentManager(Interactable interactor, CompanyService service) {
         super(interactor, service);
         this.setDailySalary(BigDecimal.valueOf(200));
+        this.personnels = service.getPersonnels();
     }
 
     public int getTotalManagedEmployees() {
@@ -52,9 +54,13 @@ public class DepartmentManager extends Personnel {
 
         List<Employee> employees = new ArrayList<>(totalManagedEmployees);
         for (int i = 0; i < totalManagedEmployees; i++) {
-            employees.add(new Employee(interactor, service));
-            employees.get(i).enter();
+            Employee newEmployee = new Employee(interactor, service);
+            newEmployee.enter();
+            employees.add(newEmployee);
+            personnels.add(newEmployee);
         }
+
+        service.savePersonnels(personnels);
     }
 
     @Override
