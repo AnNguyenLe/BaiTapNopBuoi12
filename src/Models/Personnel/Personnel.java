@@ -8,6 +8,7 @@ import java.util.UUID;
 import CustomExceptions.NegativeNumberException;
 import CustomExceptions.NullOrEmptyStringException;
 import Extensions.StringExtensions;
+import Models.Company.Constants;
 import Services.CompanyManagement.CompanyService;
 import UserInteractor.Interactable;
 
@@ -25,11 +26,16 @@ public abstract class Personnel {
     private String fullName;
     private int yearOfBirth;
     private Gender gender;
-    private BigDecimal dailySalary = BigDecimal.valueOf(100);
+    private BigDecimal dailySalary = Constants.EMPLOYEE_DAILY_SALARY;
     private int noOfWorkingDays;
 
     protected Interactable interactor;
     protected CompanyService service;
+
+    // Use with caution!
+    public Personnel(String id) {
+        this.id = id;
+    }
 
     public Personnel(Interactable interactor, CompanyService service) {
         setId();

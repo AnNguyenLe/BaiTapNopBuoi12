@@ -1,10 +1,14 @@
 package Applications.CompanyManagement;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.function.Function;
 
 import Applications.ConsoleApplication;
 import Models.Company.Company;
+import Models.Personnel.Employee;
+import Models.Personnel.Personnel;
 import Services.CompanyManagement.CompanyService;
 import UserInteractor.Console.ConsoleInteractable;
 
@@ -27,20 +31,55 @@ public class CompanyManagementApp implements ConsoleApplication {
 
     private final int MIN_OPTION_ID = 1;
     private final int MAX_OPTION_ID = actionOptions.size();
+    private Company company;
 
-    public CompanyManagementApp(
+    public CompanyManagementApp(Company company,
             ConsoleInteractable userInteractor, CompanyService service) {
+        this.company = company;
         this.userInteractor = userInteractor;
         this.service = service;
     }
 
     @Override
     public void run() {
-        selectAnOption(userInteractor, actionOptions);
-        Company company = new Company(userInteractor, service);
+        boolean shouldContinue = true;
 
-        company.enter();
+        while (shouldContinue) {
+            int selectedOption = selectAnOption(userInteractor, actionOptions);
+            
+            executeStrategy(selectedOption);
+            
+            shouldContinue = promptUserToContinue();
+        }
+        
+        stop();
     }
+
+    private void executeStrategy(int selectedOption) {
+        
+    }
+
+    private HashMap<Integer, Function<Void, Void>> strategyMapper(){
+        HashMap<Integer, Function<Void, Void>> mapper = new HashMap<>();
+        mapper.put(1, enterCompanyInfo);
+        mapper.put(2, assignEmployeeAsDepartmentManager);
+
+        return mapper;
+    }
+
+    private Function<Void, Void> enterCompanyInfo = v -> {
+        company.enter();
+        return v;
+    };
+    private Function<Void, Void> assignEmployeeAsDepartmentManager = v -> {
+        String employeeId = userInteractor.readLine("Enter ID of Employee you want to assign as a Department Manager: ");
+        Employee employee = (Employee)service.findPersonnel(p -> p.getId().equals(employeeId));
+        employee.assignAsDepartmentManager();
+        return v;
+    };
+    // private Function enterCompanyInfo = () -> ();
+    // private Function enterCompanyInfo = () -> ();
+    // private Function enterCompanyInfo = () -> ();
 
     @Override
     public void displayOptions(Iterable<String> options) {
@@ -62,5 +101,19 @@ public class CompanyManagementApp implements ConsoleApplication {
                 option -> option < MIN_OPTION_ID || option > MAX_OPTION_ID);
 
         return selectedOption;
+    }
+
+    private void stop(){
+        userInteractor.displayMessage("Program stopped...\nWish you a great day!\n");
+    }
+
+    private boolean promptUserToContinue(){
+        boolean shouldContinue = true;
+        String userAnswer = userInteractor.readLine("\n\n--> Do you wish to continue using the app (Y/N) - Yes is the default.\nEnter 'N' to stop the program: ");
+            String refinedAnswer = userAnswer.trim().toLowerCase();
+            if(refinedAnswer.equals("n") || refinedAnswer.equals("no")){
+                shouldContinue = false;
+            }
+        return shouldContinue;
     }
 }

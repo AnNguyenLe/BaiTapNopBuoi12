@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import CustomExceptions.NegativeNumberException;
+import Models.Company.Constants;
 import Services.CompanyManagement.CompanyService;
 import UserInteractor.Interactable;
 
@@ -18,7 +19,7 @@ public class DepartmentManager extends Personnel {
 
     public DepartmentManager(Interactable interactor, CompanyService service) {
         super(interactor, service);
-        this.setDailySalary(BigDecimal.valueOf(200));
+        this.setDailySalary(Constants.DEPARTMENT_MANAGER_DAILY_SALARY);
         this.personnels = service.getPersonnels();
     }
 

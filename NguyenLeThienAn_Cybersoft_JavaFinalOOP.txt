@@ -1,0 +1,47 @@
+Company:
+Name
+TaxId
+MonthlyIncome
+CalculateTotalSalaries: () => ()
+CalculateProfit: () => ()
+
+EmployeeTypes: Director, DeputyManager, Officer
+
+Personnel:
+FullName
+YearOfBirth
+Gender
+Id
+DailySalary = 100
+NoOfWorkingDays
+CalculateMonthlySalary: () => DailySalary * NoOfWorkingDays
+
+Employee: Personnel
+ManagedBy (EmployeeID/null)
+
+DepartmentManager: Personnel
+ManagedEmployees = ArrayList<Personnel>(){}
+DailySalary = 200
+CalculateMonthlySalary() => base.CalculateMonthlySalary() + 100 * TotalManagedEmployees
+
+Director: Personnel
+DailySalary = 300
+SharePercentage (0 - 100%)
+CalculateMonthlyIncome: () => ()
+
+App:
+1. Enter Company Info
+2. Assign Employee as Department Manager
+3. Add/ Delete an Employee (and references if any)
+4. Display all: employees
+5. Display total salary of the company
+6. FindMax: Employee who has the highest salary
+7. FindMax: Department Manager who has the most managed employees
+8. Sort: Employees' name alphabetically
+9. Sort: Employees' salary in descending order
+10. FindMax: Director has the most share
+11. Display all: Directors' monthly incomes 
+(where:
+	- Income = MonthSalary + SharePercentage*CompanyProfit
+	where:
+		- CompanyProfit = MontlyIncome - TotalSalaries)

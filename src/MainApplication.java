@@ -4,6 +4,7 @@ import Applications.ConsoleApplication;
 import Applications.CompanyManagement.CompanyManagementApp;
 import DataAccess.DataAccessable;
 import DataAccess.DataRepository;
+import Models.Company.Company;
 import Models.Personnel.Personnel;
 import Services.CompanyManagement.CompanyManagementService;
 import Services.CompanyManagement.CompanyService;
@@ -16,7 +17,8 @@ public class MainApplication {
         ConsoleInteractable userInteractor = new ConsoleInteractor(scanner);
         DataAccessable<Personnel> dataAccessor = new DataRepository<>();
         CompanyService companyManagementService = new CompanyManagementService(dataAccessor);
-        ConsoleApplication app = new CompanyManagementApp(userInteractor, companyManagementService);
+        Company company = new Company(userInteractor, companyManagementService);
+        ConsoleApplication app = new CompanyManagementApp(company, userInteractor, companyManagementService);
 
         try {
             app.run();

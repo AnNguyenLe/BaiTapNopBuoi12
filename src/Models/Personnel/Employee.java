@@ -1,5 +1,6 @@
 package Models.Personnel;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import Services.CompanyManagement.CompanyService;
@@ -58,8 +59,15 @@ public class Employee extends Personnel {
         super.delete();
     }
 
-    public DepartmentManager promoteToDepartmentManager(){
-        return null;
+    public void assignAsDepartmentManager(){
+        DepartmentManager dm = new DepartmentManager(interactor, service);
+        dm.setFullName(this.getFullName());
+        dm.setYearOfBirth(this.getYearOfBirth());
+        dm.setGender(this.getGender());
+        dm.setNoOfWorkingDays(this.getNoOfWorkingDays());
+        dm.setManagedEmployees(new ArrayList<>());
+
+        service.assignEmployeeAsDepartmentManager(this, dm);
     }
 
     private boolean ValidateManagerId(CompanyService service, String managerId) {
