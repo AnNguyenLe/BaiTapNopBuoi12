@@ -33,7 +33,11 @@ public class CompanyManagementService implements CompanyService {
     }
 
     public boolean removePersonnel(String personnelId) {
-        return personnels.removeIf(p -> p.getId() == personnelId);
+        boolean hasBeenRemoved = personnels.removeIf(p -> p.getId() == personnelId);
+        if (hasBeenRemoved) {
+            savePersonnels(personnels);
+        }
+        return hasBeenRemoved;
     }
 
     public Personnel findPersonnel(Predicate<Personnel> predicate) {

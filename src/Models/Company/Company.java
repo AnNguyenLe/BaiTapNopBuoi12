@@ -86,30 +86,7 @@ public class Company {
                 value -> value <= 0);
         List<Personnel> personnels = new ArrayList<>(totalPersonnels);
         for (int i = 0; i < totalPersonnels; i++) {
-            Personnel personnel;
-            int maxValidOptionId = personnelTypes.size();
-            int selectedOption = interactor
-                    .readInt(
-                            "Enter a corresponding number to generate a personnel --> " + promptChoosePersonnelType()
-                                    + ": ",
-                            "Number must be in range from 1 to " + maxValidOptionId + " only!",
-                            optionNo -> optionNo < 1 || optionNo > maxValidOptionId);
-            switch (selectedOption) {
-                case 1:
-                    personnel = new Employee(interactor, service);
-                    break;
-                case 2:
-                    personnel = new DepartmentManager(interactor, service);
-                    break;
-                case 3:
-                    personnel = new Director(interactor, service);
-                    break;
-                default:
-                    personnel = new Employee(interactor, service);
-                    break;
-            }
-            personnel.enter();
-            personnels.add(personnel);
+            personnels = addNewPersonel(personnels);
         }
         service.savePersonnels(personnels);
     }
@@ -142,5 +119,37 @@ public class Company {
                 .mapToObj(index -> (index + 1) + ". for " + personnelTypes.get(index))
                 .collect(Collectors.toList());
         return String.join(" | ", formattedList);
+    }
+
+    public List<Personnel> addNewPersonel(List<Personnel> personnels) {
+        Personnel personnel;
+        int maxValidOptionId = personnelTypes.size();
+        int selectedOption = interactor
+                .readInt(
+                        "Enter a corresponding number to generate a personnel --> " + promptChoosePersonnelType()
+                                + ": ",
+                        "Number must be in range from 1 to " + maxValidOptionId + " only!",
+                        optionNo -> optionNo < 1 || optionNo > maxValidOptionId);
+        switch (selectedOption) {
+            case 1:
+                personnel = new Employee(interactor, service);
+                break;
+            case 2:
+                personnel = new DepartmentManager(interactor, service);
+                break;
+            case 3:
+                personnel = new Director(interactor, service);
+                break;
+            default:
+                personnel = new Employee(interactor, service);
+                break;
+        }
+        personnel.enter();
+        if (personnels == null) {
+            personnels = new ArrayList<>();
+        }
+        personnels.add(personnel);
+
+        return personnels;
     }
 }

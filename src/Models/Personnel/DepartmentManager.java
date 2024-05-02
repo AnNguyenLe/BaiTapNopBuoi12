@@ -21,6 +21,7 @@ public class DepartmentManager extends Personnel {
         super(interactor, service);
         this.setDailySalary(Constants.DEPARTMENT_MANAGER_DAILY_SALARY);
         this.personnels = service.getPersonnels();
+        this.setIsDeptManager(true);
     }
 
     public int getTotalManagedEmployees() {

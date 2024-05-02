@@ -13,6 +13,7 @@ public class Director extends Personnel {
     public Director(Interactable interactor, CompanyService service) {
         super(interactor, service);
         this.setDailySalary(Constants.DIRECTOR_DAILY_SALARY);
+        this.setIsDirector(true);
     }
 
     public double getSharePercentage() {
@@ -42,7 +43,7 @@ public class Director extends Personnel {
         return String.join("\n",
                 "Director information:",
                 super.toString(),
-                "Shares/Stocks Percentage: " + sharePercentage);
+                "Shares/Stocks Percentage: " + sharePercentage * 100 + "%");
     }
 
     public BigDecimal calculateMonthlyIncome(Company company) {

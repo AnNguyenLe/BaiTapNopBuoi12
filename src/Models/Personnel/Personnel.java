@@ -28,6 +28,8 @@ public abstract class Personnel {
     private Gender gender;
     private BigDecimal dailySalary = Constants.EMPLOYEE_DAILY_SALARY;
     private int noOfWorkingDays;
+    private boolean isDeptManager;
+    private boolean isDirector;
 
     protected Interactable interactor;
     protected CompanyService service;
@@ -183,6 +185,22 @@ public abstract class Personnel {
         }
 
         return Gender.Others;
+    }
+
+    public boolean getIsDeptManager() {
+        return isDeptManager;
+    }
+
+    protected void setIsDeptManager(boolean isDeptManager) {
+        this.isDeptManager = isDeptManager;
+    }
+
+    public boolean getIsDirector() {
+        return isDirector;
+    }
+
+    protected void setIsDirector(boolean isDirector) {
+        this.isDirector = isDirector;
     }
 
 }
