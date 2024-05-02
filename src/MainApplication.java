@@ -4,7 +4,6 @@ import Applications.ConsoleApplication;
 import Applications.CompanyManagement.CompanyManagementApp;
 import DataAccess.DataAccessable;
 import DataAccess.DataRepository;
-import Models.Personnel.Employee;
 import Models.Personnel.Personnel;
 import Services.CompanyManagement.CompanyManagementService;
 import Services.CompanyManagement.CompanyService;
@@ -19,8 +18,6 @@ public class MainApplication {
         CompanyService companyManagementService = new CompanyManagementService(dataAccessor);
         ConsoleApplication app = new CompanyManagementApp(userInteractor, companyManagementService);
 
-        new Employee(userInteractor, companyManagementService).enter();
-
         try {
             app.run();
         } catch (Exception e) {
@@ -28,7 +25,7 @@ public class MainApplication {
             userInteractor
                     .displayMessage("\nUnexpected error has occured!\n" +
                             "Please contact the support team.\n" +
-                            "Please restart to use the application. Sorry for this inconvenience!");
+                            "Please restart to use the application. Sorry for this inconvenience!\n");
         }
 
         scanner.close();

@@ -114,20 +114,35 @@ public abstract class Personnel {
                 "Number of Working Days: " + noOfWorkingDays);
     }
 
-    protected void enter() {
+    public void enter() {
         setFullName(
-                interactor.readLine("Full Name: "));
-        setYearOfBirth(interactor.readInt("Year of birth: "));
+                interactor.readLine(
+                        "Full Name: ",
+                        "Full Name cannot be null or empty!",
+                        str -> StringExtensions.isNullOrEmpty(str)));
+        setYearOfBirth(
+                interactor.readInt(
+                        "Year of birth: ",
+                        "Year of birth must be number AND cannot be in the future!",
+                        yearOfBirth -> yearOfBirth > CURRENT_YEAR));
         setGender(interactor.readLine("Gender (m/f/others): "));
-        setDailySalary(interactor.readBigDecimal("Daily salary: "));
-        setNoOfWorkingDays(interactor.readInt("Number of working days: "));
+        setDailySalary(
+                interactor.readBigDecimal(
+                        "Daily salary: ",
+                        "Daily salary must be a non-negative number!",
+                        dailySalary -> dailySalary.compareTo(BigDecimal.ZERO) < 0));
+        setNoOfWorkingDays(
+                interactor.readInt(
+                        "Number of working days: ",
+                        "Number of working must be between 1 - " + DAY_IN_CURRENT_MONTH,
+                        noOfWorkingDays -> noOfWorkingDays < 1 || noOfWorkingDays > DAY_IN_CURRENT_MONTH));
     }
 
     public BigDecimal calculateMonthlySalary() {
         return dailySalary.multiply(BigDecimal.valueOf(noOfWorkingDays));
     }
 
-    public void delete(){
+    public void delete() {
         // Remove this Personnel in data repository
         boolean hasBeenRemoved = service.removePersonnel(getId());
         if (hasBeenRemoved) {

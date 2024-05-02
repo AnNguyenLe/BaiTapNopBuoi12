@@ -27,17 +27,13 @@ public class Director extends Personnel {
 
     @Override
     public void enter() {
-        boolean isQualified = true;
-        do {
-            try {
-                interactor.displayMessage("Please enter the Director information: \n");
-                super.enter();
-                setSharePercentage(interactor.readDouble("Shares/Stocks Percentage ([0 - 1]): "));
-            } catch (Exception e) {
-                isQualified = false;
-                interactor.displayMessage(e.getMessage() + "\n");
-            }
-        } while (!isQualified);
+        interactor.displayMessage("Please enter the Director information: \n");
+        super.enter();
+        setSharePercentage(
+                interactor.readDouble(
+                        "Shares/Stocks Percentage ([0 - 1]): ",
+                        "Percentage must be a value between 0 and 1!",
+                        percentage -> percentage < 0 || percentage > 1));
     }
 
     @Override

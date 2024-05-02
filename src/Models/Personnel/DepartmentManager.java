@@ -44,23 +44,17 @@ public class DepartmentManager extends Personnel {
 
     @Override
     public void enter() {
-        boolean isQualified = true;
-        do {
-            try {
-                interactor.displayMessage("Please enter the Department Manager information: \n");
-                super.enter();
-                setTotalManagedEmployees(interactor.readInt("Total managed employees (> 0): "));
+        interactor.displayMessage("Please enter the Department Manager information: \n");
+        super.enter();
+        setTotalManagedEmployees(interactor.readInt("Total managed employees (> 0): ",
+                "Total managed employees cannot be a negative number!",
+                total -> total < 0));
 
-                List<Employee> employees = new ArrayList<>(totalManagedEmployees);
-                for (int i = 0; i < totalManagedEmployees; i++) {
-                    employees.set(i, new Employee(interactor, service));
-                    employees.get(i).enter();
-                }
-            } catch (Exception e) {
-                isQualified = false;
-                interactor.displayMessage(e.getMessage() + "\n");
-            }
-        } while (!isQualified);
+        List<Employee> employees = new ArrayList<>(totalManagedEmployees);
+        for (int i = 0; i < totalManagedEmployees; i++) {
+            employees.add(new Employee(interactor, service));
+            employees.get(i).enter();
+        }
     }
 
     @Override

@@ -14,7 +14,6 @@ public class CompanyManagementService implements CompanyService {
 
     public CompanyManagementService(DataAccessable<Personnel> dataRepository) {
         this.dataRepository = dataRepository;
-        personnels = dataRepository.getAll();
     }
 
     public List<Personnel> getPersonnels(){

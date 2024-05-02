@@ -1,12 +1,18 @@
 package Models.Company;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import CustomExceptions.NegativeNumberException;
 import CustomExceptions.NullOrEmptyStringException;
 import Extensions.StringExtensions;
+import Models.Personnel.DepartmentManager;
+import Models.Personnel.Director;
+import Models.Personnel.Employee;
 import Models.Personnel.Personnel;
 import Services.CompanyManagement.CompanyService;
 import UserInteractor.Interactable;
@@ -18,6 +24,11 @@ public class Company {
 
     private Interactable interactor;
     private CompanyService service;
+
+    private List<String> personnelTypes = List.of(
+            Employee.class.getSimpleName(),
+            DepartmentManager.class.getSimpleName(),
+            Director.class.getSimpleName());
 
     public Company(Interactable interactor, CompanyService service) {
         setTaxId();
@@ -56,17 +67,51 @@ public class Company {
     }
 
     public void enter() {
-        boolean isQualified = true;
-        do {
-            try {
-                interactor.displayMessage("Please enter the Company information: \n");
-                setName(interactor.readLine("Company's name: "));
-                setMonthlyIncome(interactor.readBigDecimal("Monthly Income (> 0): "));
-            } catch (Exception e) {
-                isQualified = false;
-                interactor.displayMessage(e.getMessage() + "\n");
+
+        interactor.displayMessage("Please enter the Company information: \n");
+        setName(
+                interactor.readLine(
+                        "Company's name: ",
+                        "Company name cannot be null or empty!",
+                        str -> StringExtensions.isNullOrEmpty(str)));
+        setMonthlyIncome(
+                interactor.readBigDecimal(
+                        "Monthly Income (> 0): ",
+                        "Monthly income must be a non-negative number!",
+                        bigDecimalValue -> bigDecimalValue.compareTo(BigDecimal.ZERO) < 0));
+
+        int totalPersonnels = interactor.readInt(
+                "How many personnel in your company? : ",
+                "Number of personnels must be a positive number!",
+                value -> value <= 0);
+        List<Personnel> personnels = new ArrayList<>(totalPersonnels);
+        for (int i = 0; i < totalPersonnels; i++) {
+            Personnel personnel;
+            int maxValidOptionId = personnelTypes.size();
+            int selectedOption = interactor
+                    .readInt(
+                            "Enter a corresponding number to generate a personnel --> " + promptChoosePersonnelType()
+                                    + ": ",
+                            "Number must be in range from 1 to " + maxValidOptionId + " only!",
+                            optionNo -> optionNo < 1 || optionNo > maxValidOptionId);
+            switch (selectedOption) {
+                case 1:
+                    personnel = new Employee(interactor, service);
+                    break;
+                case 2:
+                    personnel = new DepartmentManager(interactor, service);
+                    break;
+                case 3:
+                    personnel = new Director(interactor, service);
+                    break;
+                default:
+                    personnel = new Employee(interactor, service);
+                    break;
             }
-        } while (!isQualified);
+            personnel.enter();
+            personnels.add(personnel);
+        }
+        service.savePersonnels(personnels);
     }
 
     @Override
@@ -78,7 +123,7 @@ public class Company {
                 "Monthly Income: " + monthlyIncome.toPlainString());
     }
 
-    public BigDecimal calculateTotalSalaries(){
+    public BigDecimal calculateTotalSalaries() {
         BigDecimal total = BigDecimal.ZERO;
         List<Personnel> personnels = service.getPersonnels();
         for (Personnel personnel : personnels) {
@@ -88,7 +133,14 @@ public class Company {
         return total;
     }
 
-    public BigDecimal calculateProfits(){
+    public BigDecimal calculateProfits() {
         return monthlyIncome.subtract(calculateTotalSalaries());
+    }
+
+    private String promptChoosePersonnelType() {
+        List<String> formattedList = IntStream.range(0, personnelTypes.size())
+                .mapToObj(index -> (index + 1) + ". for " + personnelTypes.get(index))
+                .collect(Collectors.toList());
+        return String.join(" | ", formattedList);
     }
 }

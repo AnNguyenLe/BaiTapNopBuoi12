@@ -1,15 +1,18 @@
 package UserInteractor;
 
 import java.math.BigDecimal;
+import java.util.function.Predicate;
 
 public interface Interactable {
     void displayMessage(String message);
 
     String readLine(String promptingMessage);
 
-    int readInt(String promptingMessage);
+    String readLine(String promptingMessage, String remindMessage, Predicate<String> predicate);
 
-    double readDouble(String promptingMessage);
+    int readInt(String promptingMessage, String remindMessage, Predicate<Integer> predicate);
 
-    BigDecimal readBigDecimal(String promptingMessage);
+    double readDouble(String promptingMessage, String remindMessage, Predicate<Double> predicate);
+
+    BigDecimal readBigDecimal(String promptingMessage, String remindMessage, Predicate<BigDecimal> predicate);
 }

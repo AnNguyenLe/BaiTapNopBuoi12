@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import Applications.ConsoleApplication;
+import Models.Company.Company;
 import Services.CompanyManagement.CompanyService;
 import UserInteractor.Console.ConsoleInteractable;
 
@@ -36,6 +37,9 @@ public class CompanyManagementApp implements ConsoleApplication {
     @Override
     public void run() {
         selectAnOption(userInteractor, actionOptions);
+        Company company = new Company(userInteractor, service);
+
+        company.enter();
     }
 
     @Override
@@ -50,12 +54,12 @@ public class CompanyManagementApp implements ConsoleApplication {
     @Override
     public int selectAnOption(ConsoleInteractable userInteractor, Iterable<String> options) {
         displayOptions(options);
-        String promptingMessage = "\n--> Select an action: (from " + MIN_OPTION_ID + " to " + MAX_OPTION_ID
-                + " only): ";
-        int selectedOption;
-        do {
-            selectedOption = userInteractor.readInt(promptingMessage);
-        } while (selectedOption < MIN_OPTION_ID || selectedOption > MAX_OPTION_ID);
+        String promptingMessage = "--> Select an action: (from " + MIN_OPTION_ID + " to " + MAX_OPTION_ID
+                + " only)";
+        int selectedOption = userInteractor.readInt(
+                promptingMessage + ": ",
+                "Valid option must be between " + MIN_OPTION_ID + " and " + MAX_OPTION_ID,
+                option -> option < MIN_OPTION_ID || option > MAX_OPTION_ID);
 
         return selectedOption;
     }

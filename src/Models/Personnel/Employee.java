@@ -31,17 +31,8 @@ public class Employee extends Personnel {
 
     @Override
     public void enter() {
-        boolean isQualified = true;
-        do {
-            try {
-                interactor.displayMessage("Please enter the Employee information: \n");
-                super.enter();
-                setManagerId(service, interactor.readLine("Employee's manager ID: "));
-            } catch (Exception e) {
-                isQualified = false;
-                interactor.displayMessage(e.getMessage() + "\n");
-            }
-        } while (!isQualified);
+        interactor.displayMessage("Please enter the Employee information: \n");
+        super.enter();
     }
 
     @Override
@@ -53,11 +44,11 @@ public class Employee extends Personnel {
     }
 
     @Override
-    public void delete(){
+    public void delete() {
         // Update manager's managed employees list
         Personnel personnel = service.findPersonnel(p -> p.getId().equals(managerId));
         if (personnel != null) {
-            DepartmentManager manager = (DepartmentManager)personnel;
+            DepartmentManager manager = (DepartmentManager) personnel;
             List<Employee> managedEmployees = manager.getManagedEmployees();
             managedEmployees.removeIf(p -> p.getId().equals(getId()));
             manager.setManagedEmployees(managedEmployees);
@@ -65,6 +56,10 @@ public class Employee extends Personnel {
 
         // Remove this Personnel in data repository
         super.delete();
+    }
+
+    public DepartmentManager promoteToDepartmentManager(){
+        return null;
     }
 
     private boolean ValidateManagerId(CompanyService service, String managerId) {
