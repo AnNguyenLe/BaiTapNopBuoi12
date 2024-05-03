@@ -74,7 +74,7 @@ public class CompanyManagementService implements CompanyService {
 
     public <T extends Personnel> void displayTableOfPersonnels(String title, List<T> personnels) {
         System.out.println("\n" + title + "\n");
-        System.out.printf("%-40s | %-30s | %-10s | %-10s\n", "ID", "Fullname", "Phone Number", "Gender");
+        System.out.printf("%-40s | %-30s | %-20s | %-10s\n", "ID", "Fullname", "Phone Number", "Gender");
         for (Personnel p : personnels) {
             System.out.printf("%-40s | %-30s | %-10s | %-10s\n", p.getId(), p.getFullName(), p.getPhoneNumber(),
                     p.getGender());

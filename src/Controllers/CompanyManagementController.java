@@ -21,7 +21,8 @@ public class CompanyManagementController {
     private Company company;
     private ConsoleApplication app;
 
-    public CompanyManagementController(ConsoleApplication app, Interactable userInteractor, CompanyService service, Company company) {
+    public CompanyManagementController(ConsoleApplication app, Interactable userInteractor, CompanyService service,
+            Company company) {
         this.userInteractor = userInteractor;
         this.service = service;
         this.company = company;
@@ -38,20 +39,23 @@ public class CompanyManagementController {
         String employeeId = userInteractor.readLine("Enter employee's ID you want to assign to be managed: ");
         Personnel employee = service.findPersonnel(p -> p.getId().equals(employeeId));
         if (employee == null) {
-            userInteractor.displayMessage("Something wrong with the employee ID you enter.\nMake sure you enter a valid ID in the next try.\n");
-            return v;
-        }
-        
-        List<DepartmentManager> departmentManagers = service.getListOf(DepartmentManager.class);
-        service.displayTableOfPersonnels("LIST OF DEPARTMENT MANAGERS", departmentManagers);
-        String dmId = userInteractor.readLine("Enter department manager's ID who will manage the selected employee above: ");
-        Personnel dm = service.findPersonnel(p -> p.getId().equals(dmId));
-        if (dm == null) {
-            userInteractor.displayMessage("Something wrong with the department manager ID you enter.\nMake sure you enter a valid ID in the next try.\n");
+            userInteractor.displayMessage(
+                    "Something wrong with the employee ID you enter.\nMake sure you enter a valid ID in the next try.\n");
             return v;
         }
 
-        ((Employee)employee).toBeManagedBy((DepartmentManager)dm);
+        List<DepartmentManager> departmentManagers = service.getListOf(DepartmentManager.class);
+        service.displayTableOfPersonnels("LIST OF DEPARTMENT MANAGERS", departmentManagers);
+        String dmId = userInteractor
+                .readLine("Enter department manager's ID who will manage the selected employee above: ");
+        Personnel dm = service.findPersonnel(p -> p.getId().equals(dmId));
+        if (dm == null) {
+            userInteractor.displayMessage(
+                    "Something wrong with the department manager ID you enter.\nMake sure you enter a valid ID in the next try.\n");
+            return v;
+        }
+
+        ((Employee) employee).toBeManagedBy((DepartmentManager) dm);
         return v;
     };
     public Function<Void, Void> addNewPersonnel = v -> {
@@ -62,7 +66,7 @@ public class CompanyManagementController {
     };
     public Function<Void, Void> deletePersonnel = v -> {
         String employeeId = userInteractor
-                .readLine("Enter ID of Employee you want to assign as a Department Manager: ");
+                .readLine("Enter ID of Employee you want to delete: ");
         Employee employee = (Employee) service.findPersonnel(p -> p.getId().equals(employeeId));
         employee.delete();
         return v;

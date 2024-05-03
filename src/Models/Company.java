@@ -77,7 +77,7 @@ public class Company {
                         bigDecimalValue -> bigDecimalValue.compareTo(BigDecimal.ZERO) < 0));
 
         int totalPersonnels = interactor.readInt(
-                "How many personnel in your company? : ",
+                "How many personnels in your company? : ",
                 "Number of personnels must be a positive number!",
                 value -> value <= 0);
         List<Personnel> personnels = new ArrayList<>(totalPersonnels);

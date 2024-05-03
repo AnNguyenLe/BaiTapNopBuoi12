@@ -175,9 +175,9 @@ public abstract class Personnel {
 
     private String genderMapperEnumToString(Gender gender) {
         return switch (gender) {
-            case Male -> "Male.";
-            case Female -> "Female.";
-            default -> "Prefer to to say.";
+            case Male -> "Male";
+            case Female -> "Female";
+            default -> "Prefer to to say";
         };
     }
 

@@ -41,6 +41,7 @@ public class CompanyManagementApp implements ConsoleApplication {
 
     @Override
     public void run() {
+        int exitOption = actionOptions.size();
         boolean shouldContinue = true;
         while (shouldContinue) {
             int selectedOption;
@@ -49,7 +50,7 @@ public class CompanyManagementApp implements ConsoleApplication {
 
             executeStrategy(selectedOption);
 
-            if (selectedOption == actionOptions.size()) {
+            if (selectedOption == exitOption) {
                 shouldContinue = false;
             }
         }
@@ -95,7 +96,7 @@ public class CompanyManagementApp implements ConsoleApplication {
                 + " only)";
         int selectedOption = userInteractor.readInt(
                 promptingMessage + ": ",
-                "Valid option must be between " + MIN_OPTION_ID + " and " + MAX_OPTION_ID,
+                "Valid option must be between " + MIN_OPTION_ID + " and " + MAX_OPTION_ID + ".\n",
                 option -> option < MIN_OPTION_ID || option > MAX_OPTION_ID);
 
         return selectedOption;
