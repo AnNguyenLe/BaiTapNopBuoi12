@@ -1,9 +1,8 @@
-package Models.Personnel;
+package Models;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import Services.CompanyManagement.CompanyService;
+import Services.CompanyService;
 import UserInteractor.Interactable;
 
 public class Employee extends Personnel {
@@ -59,15 +58,15 @@ public class Employee extends Personnel {
         super.delete();
     }
 
-    public void assignAsDepartmentManager(){
-        DepartmentManager dm = new DepartmentManager(interactor, service);
-        dm.setFullName(this.getFullName());
-        dm.setYearOfBirth(this.getYearOfBirth());
-        dm.setGender(this.getGender());
-        dm.setNoOfWorkingDays(this.getNoOfWorkingDays());
-        dm.setManagedEmployees(new ArrayList<>());
-
-        service.assignEmployeeAsDepartmentManager(this, dm);
+    public void toBeManagedBy(DepartmentManager dm) {
+        if (managerId != null) {
+            interactor.displayMessage(
+                    "Assignment process stopped. Reason: This employee has been assigned to Department Manager with ID: "
+                            + managerId + ".");
+            return;
+        }
+        dm.addManagedPersonnel(this);
+        managerId = dm.getId();
     }
 
     private boolean ValidateManagerId(CompanyService service, String managerId) {

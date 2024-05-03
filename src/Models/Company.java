@@ -1,4 +1,4 @@
-package Models.Company;
+package Models;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -10,11 +10,7 @@ import java.util.stream.IntStream;
 import CustomExceptions.NegativeNumberException;
 import CustomExceptions.NullOrEmptyStringException;
 import Extensions.StringExtensions;
-import Models.Personnel.DepartmentManager;
-import Models.Personnel.Director;
-import Models.Personnel.Employee;
-import Models.Personnel.Personnel;
-import Services.CompanyManagement.CompanyService;
+import Services.CompanyService;
 import UserInteractor.Interactable;
 
 public class Company {
@@ -30,9 +26,9 @@ public class Company {
             DepartmentManager.class.getSimpleName(),
             Director.class.getSimpleName());
 
-    public Company(Interactable interactor, CompanyService service) {
+    public Company(Interactable userInteractor, CompanyService service) {
         setTaxId();
-        this.interactor = interactor;
+        this.interactor = userInteractor;
         this.service = service;
     }
 

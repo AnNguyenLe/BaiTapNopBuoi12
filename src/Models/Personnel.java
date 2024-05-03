@@ -1,4 +1,4 @@
-package Models.Personnel;
+package Models;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -8,8 +8,7 @@ import java.util.UUID;
 import CustomExceptions.NegativeNumberException;
 import CustomExceptions.NullOrEmptyStringException;
 import Extensions.StringExtensions;
-import Models.Company.Constants;
-import Services.CompanyManagement.CompanyService;
+import Services.CompanyService;
 import UserInteractor.Interactable;
 
 enum Gender {
@@ -25,19 +24,18 @@ public abstract class Personnel {
     private String id;
     private String fullName;
     private int yearOfBirth;
+    private int phoneNumber;
     private Gender gender;
     private BigDecimal dailySalary = Constants.EMPLOYEE_DAILY_SALARY;
     private int noOfWorkingDays;
     private boolean isDeptManager;
     private boolean isDirector;
 
+    private final int minYoB = CURRENT_YEAR - Constants.CURRENT_HUMAN_AGE_LIMIT;
+    private final int maxYoB = CURRENT_YEAR;
+
     protected Interactable interactor;
     protected CompanyService service;
-
-    // Use with caution!
-    public Personnel(String id) {
-        this.id = id;
-    }
 
     public Personnel(Interactable interactor, CompanyService service) {
         setId();
@@ -69,10 +67,21 @@ public abstract class Personnel {
     }
 
     public void setYearOfBirth(int yearOfBirth) {
-        if (yearOfBirth > CURRENT_YEAR) {
-            throw new IllegalArgumentException("Year of Birth cannot be in the future!");
+        if (yearOfBirth < minYoB || yearOfBirth > maxYoB) {
+            throw new IllegalArgumentException("Year of birth must be in the range from " + minYoB + " and " + maxYoB);
         }
         this.yearOfBirth = yearOfBirth;
+    }
+
+    public int getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(int phoneNumber) {
+        if (phoneNumber < 0) {
+            throw new NegativeNumberException("Phone number");
+        }
+        this.phoneNumber = phoneNumber;
     }
 
     public String getGender() {
@@ -131,8 +140,13 @@ public abstract class Personnel {
         setYearOfBirth(
                 interactor.readInt(
                         "Year of birth: ",
-                        "Year of birth must be number AND cannot be in the future!",
-                        yearOfBirth -> yearOfBirth > CURRENT_YEAR));
+                        "Year of birth must be in the range from " + minYoB + " and " + maxYoB,
+                        yearOfBirth -> yearOfBirth < minYoB || yearOfBirth > maxYoB));
+        setPhoneNumber(
+                interactor.readInt(
+                        "Phone number: ",
+                        "Phone number must be number AND must be a non-negative number!",
+                        phoneNumber -> phoneNumber < 0));
         setGender(interactor.readLine("Gender (m/f/others): "));
         setDailySalary(
                 interactor.readBigDecimal(

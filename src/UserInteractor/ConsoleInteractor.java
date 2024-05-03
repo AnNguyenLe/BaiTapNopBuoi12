@@ -1,4 +1,4 @@
-package UserInteractor.Console;
+package UserInteractor;
 
 import java.math.BigDecimal;
 import java.util.Scanner;
@@ -110,8 +110,6 @@ public class ConsoleInteractor implements ConsoleInteractable {
         try {
             Double.parseDouble(str);
             return true;
-        } catch (NullPointerException e) {
-            return false;
         } catch (NumberFormatException e) {
             return false;
         }
@@ -130,8 +128,6 @@ public class ConsoleInteractor implements ConsoleInteractable {
         try {
             BigDecimal.valueOf(Double.parseDouble(str));
             return true;
-        } catch (NullPointerException e) {
-            return false;
         } catch (NumberFormatException e) {
             return false;
         }

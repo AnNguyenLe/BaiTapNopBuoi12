@@ -1,10 +1,8 @@
-package Models.Personnel;
+package Models;
 
 import java.math.BigDecimal;
 
-import Models.Company.Company;
-import Models.Company.Constants;
-import Services.CompanyManagement.CompanyService;
+import Services.CompanyService;
 import UserInteractor.Interactable;
 
 public class Director extends Personnel {

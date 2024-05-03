@@ -1,13 +1,12 @@
-package Services.CompanyManagement;
+package Services;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
 
 import DataAccess.DataAccessable;
-import Models.Personnel.DepartmentManager;
-import Models.Personnel.Employee;
-import Models.Personnel.Personnel;
+import Models.Personnel;
 
 public class CompanyManagementService implements CompanyService {
     private List<Personnel> personnels;
@@ -45,18 +44,40 @@ public class CompanyManagementService implements CompanyService {
         return p.equals(null) ? null : p.get();
     }
 
-    public void EnterCompanyInfo() {
-
-    }
-
-    @Override
-    public void assignEmployeeAsDepartmentManager(Employee employee, DepartmentManager dm) {
-        boolean hasBeenRemoved = personnels.removeIf(p -> p.getId().equals(employee.getId()));
-        if (!hasBeenRemoved) {
-            return;
+    public <T extends Personnel> List<T> getListOf(Class<T> tClass) {
+        List<T> list = new ArrayList<>();
+        T t;
+        for (Personnel personnel : personnels) {
+            if (tClass.isInstance(personnel)) {
+                t = tClass.cast(personnel);
+                list.add(t);
+            }
         }
 
-        personnels.add(dm);
-        savePersonnels(personnels);
+        return list;
+    }
+
+    public <T extends Personnel> List<T> getListOf(Class<T> tClass, Predicate<T> predicate) {
+        List<T> list = new ArrayList<>();
+        T t;
+        for (Personnel personnel : personnels) {
+            if (tClass.isInstance(personnel)) {
+                t = tClass.cast(personnel);
+                if (predicate.test(t)) {
+                    list.add(t);
+                }
+            }
+        }
+
+        return list;
+    }
+
+    public <T extends Personnel> void displayTableOfPersonnels(String title, List<T> personnels) {
+        System.out.println("\n" + title + "\n");
+        System.out.printf("%-40s | %-30s | %-10s | %-10s\n", "ID", "Fullname", "Phone Number", "Gender");
+        for (Personnel p : personnels) {
+            System.out.printf("%-40s | %-30s | %-10s | %-10s\n", p.getId(), p.getFullName(), p.getPhoneNumber(),
+                    p.getGender());
+        }
     }
 }

@@ -1,39 +1,57 @@
-package Applications.CompanyManagement;
+package Controllers;
 
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.function.Function;
 
+import Applications.ConsoleApplication;
 import Comparators.SortByMonthSalaryDesc;
 import Comparators.SortByName;
-import Models.Company.Company;
-import Models.Personnel.DepartmentManager;
-import Models.Personnel.Director;
-import Models.Personnel.Employee;
-import Models.Personnel.Personnel;
-import Services.CompanyManagement.CompanyService;
-import UserInteractor.Console.ConsoleInteractable;
+import Models.Company;
+import Models.DepartmentManager;
+import Models.Director;
+import Models.Employee;
+import Models.Personnel;
+import Services.CompanyService;
+import UserInteractor.Interactable;
 
-public class Controller {
-    private ConsoleInteractable userInteractor;
+public class CompanyManagementController {
+    private Interactable userInteractor;
     private CompanyService service;
     private Company company;
+    private ConsoleApplication app;
 
-    public Controller(ConsoleInteractable userInteractor, CompanyService service, Company company) {
+    public CompanyManagementController(ConsoleApplication app, Interactable userInteractor, CompanyService service, Company company) {
         this.userInteractor = userInteractor;
         this.service = service;
         this.company = company;
+        this.app = app;
     }
 
     public Function<Void, Void> enterCompanyInfo = v -> {
         company.enter();
         return v;
     };
-    public Function<Void, Void> assignEmployeeAsDepartmentManager = v -> {
-        String employeeId = userInteractor
-                .readLine("Enter ID of Employee you want to assign as a Department Manager: ");
-        Employee employee = (Employee) service.findPersonnel(p -> p.getId().equals(employeeId));
-        employee.assignAsDepartmentManager();
+    public Function<Void, Void> assignEmployeeToDepartmentManager = v -> {
+        List<Employee> unmanagedEmployees = service.getListOf(Employee.class, e -> e.getManagerId() == null);
+        service.displayTableOfPersonnels("LIST OF UNMANAGED EMPLOYEES", unmanagedEmployees);
+        String employeeId = userInteractor.readLine("Enter employee's ID you want to assign to be managed: ");
+        Personnel employee = service.findPersonnel(p -> p.getId().equals(employeeId));
+        if (employee == null) {
+            userInteractor.displayMessage("Something wrong with the employee ID you enter.\nMake sure you enter a valid ID in the next try.\n");
+            return v;
+        }
+        
+        List<DepartmentManager> departmentManagers = service.getListOf(DepartmentManager.class);
+        service.displayTableOfPersonnels("LIST OF DEPARTMENT MANAGERS", departmentManagers);
+        String dmId = userInteractor.readLine("Enter department manager's ID who will manage the selected employee above: ");
+        Personnel dm = service.findPersonnel(p -> p.getId().equals(dmId));
+        if (dm == null) {
+            userInteractor.displayMessage("Something wrong with the department manager ID you enter.\nMake sure you enter a valid ID in the next try.\n");
+            return v;
+        }
+
+        ((Employee)employee).toBeManagedBy((DepartmentManager)dm);
         return v;
     };
     public Function<Void, Void> addNewPersonnel = v -> {
@@ -57,9 +75,7 @@ public class Controller {
             return v;
         }
 
-        for (Personnel personnel : personnels) {
-            userInteractor.displayMessage(personnel.toString());
-        }
+        service.displayTableOfPersonnels("ALL PERSONNELS OF THE COMPANY", personnels);
         return v;
     };
 
@@ -112,24 +128,16 @@ public class Controller {
     public Function<Void, Void> sortPersonnelNamesAlphabetically = v -> {
         List<Personnel> personnels = service.getPersonnels();
         personnels.sort(new SortByName());
-        service.savePersonnels(personnels);
 
-        userInteractor.displayMessage("Personnels sorted by name alphabetically:\n");
-        for (Personnel personnel : personnels) {
-            userInteractor.displayMessage(personnel.toString());
-        }
+        service.displayTableOfPersonnels("Personnels sorted by name alphabetically:", personnels);
         return v;
     };
 
     public Function<Void, Void> sortPersonnelsSalaryDesc = v -> {
         List<Personnel> personnels = service.getPersonnels();
         personnels.sort(new SortByMonthSalaryDesc());
-        service.savePersonnels(personnels);
 
-        userInteractor.displayMessage("Personnels sorted by salary descendingly:\n");
-        for (Personnel personnel : personnels) {
-            userInteractor.displayMessage(personnel.toString());
-        }
+        service.displayTableOfPersonnels("Personnels sorted by salary descendingly:", personnels);
         return v;
     };
 
@@ -155,15 +163,21 @@ public class Controller {
 
     public Function<Void, Void> calculateEveryDirectorIncome = v -> {
         List<Personnel> personnels = service.getPersonnels();
+        userInteractor.displayMessage("Monthly income of every Director:\n");
         Director temp;
         for (Personnel personnel : personnels) {
             if (personnel.getIsDirector()) {
                 temp = (Director) personnel;
 
-                userInteractor.displayMessage("Director " + temp.getFullName() + "has income: "
+                userInteractor.displayMessage(temp.getFullName() + ": "
                         + temp.calculateMonthlyIncome(company).toPlainString());
             }
         }
+        return v;
+    };
+
+    public Function<Void, Void> exitProgram = v -> {
+        app.stop();
         return v;
     };
 }

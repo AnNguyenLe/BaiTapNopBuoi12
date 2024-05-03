@@ -1,18 +1,17 @@
-package Applications.CompanyManagement;
+package Applications;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.function.Function;
 
-import Applications.ConsoleApplication;
-import Models.Company.Company;
-import Models.Personnel.Personnel;
-import Services.CompanyManagement.CompanyService;
-import UserInteractor.Console.ConsoleInteractable;
+import Controllers.CompanyManagementController;
+import Models.Company;
+import Services.CompanyService;
+import UserInteractor.Interactable;
 
 public class CompanyManagementApp implements ConsoleApplication {
-    private ConsoleInteractable userInteractor;
+    private Interactable userInteractor;
     private CompanyService service;
     private static final List<String> actionOptions = new ArrayList<>(List.of(
             "Enter company information",
@@ -26,14 +25,15 @@ public class CompanyManagementApp implements ConsoleApplication {
             "Sort Employees' names alphabetically",
             "Sort Employees' salaries in descending order",
             "Find Director has the most share",
-            "Display all Directors' monthly incomes"));
+            "Display all Directors' monthly incomes",
+            "Exit program"));
 
     private final int MIN_OPTION_ID = 1;
     private final int MAX_OPTION_ID = actionOptions.size();
     private Company company;
 
     public CompanyManagementApp(Company company,
-            ConsoleInteractable userInteractor, CompanyService service) {
+            Interactable userInteractor, CompanyService service) {
         this.company = company;
         this.userInteractor = userInteractor;
         this.service = service;
@@ -41,25 +41,18 @@ public class CompanyManagementApp implements ConsoleApplication {
 
     @Override
     public void run() {
-        List<Personnel> personnels = service.getPersonnels();
         boolean shouldContinue = true;
-
         while (shouldContinue) {
             int selectedOption;
-            if (personnels == null) {
-                userInteractor.displayMessage(
-                        "\n\nWelcome to Company Management App!\nFirst you have to hydrate the app by enter the company information:\n");
-                selectedOption = 1;
-            } else {
-                selectedOption = selectAnOption(userInteractor, actionOptions);
-            }
+
+            selectedOption = selectAnOption(userInteractor, actionOptions);
 
             executeStrategy(selectedOption);
 
-            shouldContinue = promptUserToContinue();
+            if (selectedOption == actionOptions.size()) {
+                shouldContinue = false;
+            }
         }
-
-        stop();
     }
 
     private void executeStrategy(int selectedOption) {
@@ -68,10 +61,10 @@ public class CompanyManagementApp implements ConsoleApplication {
     }
 
     private HashMap<Integer, Function<Void, Void>> strategyMapper() {
-        Controller c = new Controller(userInteractor, service, company);
+        CompanyManagementController c = new CompanyManagementController(this, userInteractor, service, company);
         HashMap<Integer, Function<Void, Void>> mapper = new HashMap<>();
         mapper.put(1, c.enterCompanyInfo);
-        mapper.put(2, c.assignEmployeeAsDepartmentManager);
+        mapper.put(2, c.assignEmployeeToDepartmentManager);
         mapper.put(3, c.addNewPersonnel);
         mapper.put(4, c.deletePersonnel);
         mapper.put(5, c.displayAllPersonnel);
@@ -82,6 +75,7 @@ public class CompanyManagementApp implements ConsoleApplication {
         mapper.put(10, c.sortPersonnelsSalaryDesc);
         mapper.put(11, c.findLargestSharePercentageDirector);
         mapper.put(12, c.calculateEveryDirectorIncome);
+        mapper.put(13, c.exitProgram);
         return mapper;
     }
 
@@ -95,7 +89,7 @@ public class CompanyManagementApp implements ConsoleApplication {
     }
 
     @Override
-    public int selectAnOption(ConsoleInteractable userInteractor, Iterable<String> options) {
+    public int selectAnOption(Interactable userInteractor, Iterable<String> options) {
         displayOptions(options);
         String promptingMessage = "--> Select an action: (from " + MIN_OPTION_ID + " to " + MAX_OPTION_ID
                 + " only)";
@@ -107,18 +101,9 @@ public class CompanyManagementApp implements ConsoleApplication {
         return selectedOption;
     }
 
-    private void stop() {
+    @Override
+    public void stop() {
         userInteractor.displayMessage("Program stopped...\nWish you a great day!\n");
-    }
-
-    private boolean promptUserToContinue() {
-        boolean shouldContinue = true;
-        String userAnswer = userInteractor.readLine(
-                "\n\n--> Do you wish to continue using the app (Y/N) - Yes is the default.\nEnter 'N' to stop the program: ");
-        String refinedAnswer = userAnswer.trim().toLowerCase();
-        if (refinedAnswer.equals("n") || refinedAnswer.equals("no")) {
-            shouldContinue = false;
-        }
-        return shouldContinue;
+        return;
     }
 }

@@ -1,12 +1,11 @@
-package Models.Personnel;
+package Models;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
 import CustomExceptions.NegativeNumberException;
-import Models.Company.Constants;
-import Services.CompanyManagement.CompanyService;
+import Services.CompanyService;
 import UserInteractor.Interactable;
 
 public class DepartmentManager extends Personnel {
@@ -81,16 +80,26 @@ public class DepartmentManager extends Personnel {
     }
 
     public void addManagedPersonnel(Employee employee) {
-        List<Employee> updatedList = getManagedEmployees();
-        updatedList.add(employee);
-        setManagedEmployees(updatedList);
+        boolean alreadyManagedByDm = managedEmployees.contains(employee);
+        if (alreadyManagedByDm) {
+            interactor.displayMessage(
+                    "Assignment process stopped. Reason: This employee has been assigned to Department Manager with ID: "
+                            + getId() + ".");
+            return;
+        }
+        managedEmployees.add(employee);
+        interactor.displayMessage("Successfully assigned Employee ID: " + employee.getId()
+                + " to Department Manager ID: " + getId() + "!");
     }
 
     public void removeManagedPersonnel(String personnelId) {
-        boolean hasBeenRemoved = managedEmployees.removeIf(p -> p.getId() == personnelId);
-        if (hasBeenRemoved) {
-            setManagedEmployees(managedEmployees);
+        Employee employee = managedEmployees.stream().filter(p -> p.getId().equals(personnelId)).findFirst().get();
+        if(employee == null){
+            interactor.displayMessage("Employee with ID is currently not managed by this Department Manager.");
+            return;
         }
+        employee.setManagerId(service, null);
+        managedEmployees.remove(employee);
     }
 
     @Override

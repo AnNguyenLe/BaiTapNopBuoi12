@@ -1,11 +1,9 @@
-package Services.CompanyManagement;
+package Services;
 
 import java.util.List;
 import java.util.function.Predicate;
 
-import Models.Personnel.DepartmentManager;
-import Models.Personnel.Employee;
-import Models.Personnel.Personnel;
+import Models.Personnel;
 
 public interface CompanyService {
     List<Personnel> getPersonnels();
@@ -13,5 +11,7 @@ public interface CompanyService {
     Class<?> findPersonnelType(Predicate<Personnel> predicate);
     boolean removePersonnel(String personnelId);
     Personnel findPersonnel(Predicate<Personnel> predicate);
-    void assignEmployeeAsDepartmentManager(Employee employee, DepartmentManager dm);
+    <T extends Personnel> List<T> getListOf(Class<T> tClass);
+    <T extends Personnel> List<T> getListOf(Class<T> tClass, Predicate<T> predicate);
+    <T extends Personnel> void displayTableOfPersonnels(String title, List<T> personnels);
 }

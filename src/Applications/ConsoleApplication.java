@@ -1,9 +1,10 @@
 package Applications;
 
-import UserInteractor.Console.ConsoleInteractable;
+import UserInteractor.Interactable;
 
 public interface ConsoleApplication {
     void run();
+    void stop();
     void displayOptions(Iterable<String> options);
-    int selectAnOption(ConsoleInteractable userInteractor, Iterable<String> options);
+    int selectAnOption(Interactable userInteractor, Iterable<String> options);
 }
