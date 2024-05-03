@@ -158,6 +158,8 @@ public abstract class Personnel {
                         "Number of working days: ",
                         "Number of working must be between 1 - " + DAY_IN_CURRENT_MONTH,
                         noOfWorkingDays -> noOfWorkingDays < 1 || noOfWorkingDays > DAY_IN_CURRENT_MONTH));
+
+        service.addPersonnel(this);
     }
 
     public BigDecimal calculateMonthlySalary() {

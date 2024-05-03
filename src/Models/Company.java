@@ -1,7 +1,6 @@
 package Models;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -77,14 +76,12 @@ public class Company {
                         bigDecimalValue -> bigDecimalValue.compareTo(BigDecimal.ZERO) < 0));
 
         int totalPersonnels = interactor.readInt(
-                "How many personnels in your company? : ",
+                "How many personnels you want to add? : ",
                 "Number of personnels must be a positive number!",
                 value -> value <= 0);
-        List<Personnel> personnels = new ArrayList<>(totalPersonnels);
         for (int i = 0; i < totalPersonnels; i++) {
-            personnels = addNewPersonel(personnels);
+            addNewPersonel();
         }
-        service.savePersonnels(personnels);
     }
 
     @Override
@@ -117,7 +114,7 @@ public class Company {
         return String.join(" | ", formattedList);
     }
 
-    public List<Personnel> addNewPersonel(List<Personnel> personnels) {
+    public void addNewPersonel() {
         Personnel personnel;
         int maxValidOptionId = personnelTypes.size();
         int selectedOption = interactor
@@ -141,11 +138,5 @@ public class Company {
                 break;
         }
         personnel.enter();
-        if (personnels == null) {
-            personnels = new ArrayList<>();
-        }
-        personnels.add(personnel);
-
-        return personnels;
     }
 }

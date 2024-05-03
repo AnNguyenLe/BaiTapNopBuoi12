@@ -9,8 +9,6 @@ import DataAccess.DataAccessable;
 import Models.Personnel;
 
 public class CompanyManagementService implements CompanyService {
-    private List<Personnel> personnels;
-
     private DataAccessable<Personnel> dataRepository;
 
     public CompanyManagementService(DataAccessable<Personnel> dataRepository) {
@@ -18,20 +16,28 @@ public class CompanyManagementService implements CompanyService {
     }
 
     public List<Personnel> getPersonnels() {
-        return personnels;
+        return dataRepository.getAll();
     }
 
     public void savePersonnels(List<Personnel> personnels) {
-        this.personnels = personnels;
+        if (personnels == null) {
+            return;
+        }
         dataRepository.writeAll(personnels);
     }
 
+    public void addPersonnel(Personnel personnel){
+        List<Personnel> personnels = getPersonnels();
+        personnels.add(personnel);
+    }
+
     public Class<?> findPersonnelType(Predicate<Personnel> predicate) {
-        Optional<Personnel> p = personnels.stream().filter(predicate).findFirst();
+        Optional<Personnel> p = getPersonnels().stream().filter(predicate).findFirst();
         return p.equals(null) ? null : p.getClass();
     }
 
     public boolean removePersonnel(String personnelId) {
+        List<Personnel> personnels = getPersonnels();
         boolean hasBeenRemoved = personnels.removeIf(p -> p.getId() == personnelId);
         if (hasBeenRemoved) {
             savePersonnels(personnels);
@@ -40,11 +46,13 @@ public class CompanyManagementService implements CompanyService {
     }
 
     public Personnel findPersonnel(Predicate<Personnel> predicate) {
-        Optional<Personnel> p = personnels.stream().filter(predicate).findFirst();
+        Optional<Personnel> p = getPersonnels().stream().filter(predicate).findFirst();
         return p.equals(null) ? null : p.get();
     }
 
     public <T extends Personnel> List<T> getListOf(Class<T> tClass) {
+        List<Personnel> personnels = getPersonnels();
+        
         List<T> list = new ArrayList<>();
         T t;
         for (Personnel personnel : personnels) {
@@ -58,6 +66,7 @@ public class CompanyManagementService implements CompanyService {
     }
 
     public <T extends Personnel> List<T> getListOf(Class<T> tClass, Predicate<T> predicate) {
+        List<Personnel> personnels = getPersonnels();
         List<T> list = new ArrayList<>();
         T t;
         for (Personnel personnel : personnels) {
@@ -76,7 +85,7 @@ public class CompanyManagementService implements CompanyService {
         System.out.println("\n" + title + "\n");
         System.out.printf("%-40s | %-30s | %-20s | %-10s\n", "ID", "Fullname", "Phone Number", "Gender");
         for (Personnel p : personnels) {
-            System.out.printf("%-40s | %-30s | %-10s | %-10s\n", p.getId(), p.getFullName(), p.getPhoneNumber(),
+            System.out.printf("%-40s | %-30s | %-20s | %-10s\n", p.getId(), p.getFullName(), p.getPhoneNumber(),
                     p.getGender());
         }
     }

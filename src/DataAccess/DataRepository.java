@@ -1,23 +1,19 @@
 package DataAccess;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class DataRepository<T> implements DataAccessable<T> {
-    private List<T> elements;
+    private List<T> elements = new ArrayList<>();
 
     public List<T> getAll() {
-        return getElements();
-    }
-
-    public void writeAll(List<T> elements) {
-        setElements(elements);
-    }
-
-    private List<T> getElements() {
         return elements;
     }
 
-    private void setElements(List<T> elements) {
+    public void writeAll(List<T> elements) {
+        if (elements == null) {
+            return;
+        }
         this.elements = elements;
     }
 }

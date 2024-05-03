@@ -11,15 +11,13 @@ import UserInteractor.Interactable;
 public class DepartmentManager extends Personnel {
     private int totalManagedEmployees;
 
-    private List<Employee> managedEmployees;
-    private List<Personnel> personnels;
+    private List<Employee> managedEmployees = new ArrayList<>();
 
     private CompanyService service;
 
     public DepartmentManager(Interactable interactor, CompanyService service) {
         super(interactor, service);
         this.setDailySalary(Constants.DEPARTMENT_MANAGER_DAILY_SALARY);
-        this.personnels = service.getPersonnels();
         this.setIsDeptManager(true);
     }
 
@@ -49,19 +47,6 @@ public class DepartmentManager extends Personnel {
     public void enter() {
         interactor.displayMessage("Please enter the Department Manager information: \n");
         super.enter();
-        setTotalManagedEmployees(interactor.readInt("Total managed employees (> 0): ",
-                "Total managed employees cannot be a negative number!",
-                total -> total < 0));
-
-        List<Employee> employees = new ArrayList<>(totalManagedEmployees);
-        for (int i = 0; i < totalManagedEmployees; i++) {
-            Employee newEmployee = new Employee(interactor, service);
-            newEmployee.enter();
-            employees.add(newEmployee);
-            personnels.add(newEmployee);
-        }
-
-        service.savePersonnels(personnels);
     }
 
     @Override
@@ -88,13 +73,14 @@ public class DepartmentManager extends Personnel {
             return;
         }
         managedEmployees.add(employee);
+        ++totalManagedEmployees;
         interactor.displayMessage("Successfully assigned Employee ID: " + employee.getId()
                 + " to Department Manager ID: " + getId() + "!");
     }
 
     public void removeManagedPersonnel(String personnelId) {
         Employee employee = managedEmployees.stream().filter(p -> p.getId().equals(personnelId)).findFirst().get();
-        if(employee == null){
+        if (employee == null) {
             interactor.displayMessage("Employee with ID is currently not managed by this Department Manager.");
             return;
         }
