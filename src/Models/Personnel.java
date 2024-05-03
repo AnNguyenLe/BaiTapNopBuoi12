@@ -179,7 +179,7 @@ public abstract class Personnel {
         return switch (gender) {
             case Male -> "Male";
             case Female -> "Female";
-            default -> "Prefer to to say";
+            default -> "Others/Prefer not to say";
         };
     }
 

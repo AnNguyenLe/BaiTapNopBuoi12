@@ -26,7 +26,7 @@ public class CompanyManagementService implements CompanyService {
         dataRepository.writeAll(personnels);
     }
 
-    public void addPersonnel(Personnel personnel){
+    public void addPersonnel(Personnel personnel) {
         List<Personnel> personnels = getPersonnels();
         personnels.add(personnel);
     }
@@ -46,14 +46,15 @@ public class CompanyManagementService implements CompanyService {
     }
 
     public Personnel findPersonnel(Predicate<Personnel> predicate) {
-        Optional<Personnel> p = getPersonnels().stream().filter(predicate).findFirst();
-        return p.equals(null) ? null : p.get();
+        return getPersonnels().stream().filter(predicate).findFirst().orElse(null);
     }
 
     public <T extends Personnel> List<T> getListOf(Class<T> tClass) {
         List<Personnel> personnels = getPersonnels();
-        
         List<T> list = new ArrayList<>();
+        if (personnels == null || personnels.size() == 0) {
+            return list;
+        }
         T t;
         for (Personnel personnel : personnels) {
             if (tClass.isInstance(personnel)) {
@@ -68,6 +69,9 @@ public class CompanyManagementService implements CompanyService {
     public <T extends Personnel> List<T> getListOf(Class<T> tClass, Predicate<T> predicate) {
         List<Personnel> personnels = getPersonnels();
         List<T> list = new ArrayList<>();
+        if (personnels == null || personnels.size() == 0) {
+            return list;
+        }
         T t;
         for (Personnel personnel : personnels) {
             if (tClass.isInstance(personnel)) {
@@ -83,10 +87,15 @@ public class CompanyManagementService implements CompanyService {
 
     public <T extends Personnel> void displayTableOfPersonnels(String title, List<T> personnels) {
         System.out.println("\n" + title + "\n");
-        System.out.printf("%-40s | %-30s | %-20s | %-10s\n", "ID", "Fullname", "Phone Number", "Gender");
+        System.out.printf("%-40s | %-30s | %-20s | %-30s | %-40s\n", "ID", "Fullname", "Phone Number", "Gender",
+                "Monthly Salary");
         for (Personnel p : personnels) {
-            System.out.printf("%-40s | %-30s | %-20s | %-10s\n", p.getId(), p.getFullName(), p.getPhoneNumber(),
-                    p.getGender());
+            System.out.printf("%-40s | %-30s | %-20s | %-30s | %-40s\n",
+                    p.getId(),
+                    p.getFullName(),
+                    p.getPhoneNumber(),
+                    p.getGender(),
+                    p.calculateMonthlySalary());
         }
     }
 }

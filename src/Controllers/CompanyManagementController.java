@@ -39,9 +39,13 @@ public class CompanyManagementController {
         }
 
         List<Employee> unmanagedEmployees = service.getListOf(Employee.class, e -> e.getManagerId() == null);
+        if (unmanagedEmployees == null || unmanagedEmployees.size() == 0) {
+            userInteractor.displayMessage("There is no unmanaged employee to perform this action.\n");
+            return v;
+        }
         service.displayTableOfPersonnels("LIST OF UNMANAGED EMPLOYEES", unmanagedEmployees);
         String employeeId = userInteractor.readLine("Enter employee's ID you want to assign to be managed: ");
-        Personnel employee = service.findPersonnel(p -> p.getId().equals(employeeId));
+        Personnel employee = service.findPersonnel(p -> p.getId().equals(employeeId.trim()));
         if (employee == null) {
             userInteractor.displayMessage(
                     "Something wrong with the employee ID you enter.\nMake sure you enter a valid ID in the next try.\n");
@@ -52,7 +56,7 @@ public class CompanyManagementController {
         service.displayTableOfPersonnels("LIST OF DEPARTMENT MANAGERS", departmentManagers);
         String dmId = userInteractor
                 .readLine("Enter department manager's ID who will manage the selected employee above: ");
-        Personnel dm = service.findPersonnel(p -> p.getId().equals(dmId));
+        Personnel dm = service.findPersonnel(p -> p.getId().equals(dmId.trim()));
         if (dm == null) {
             userInteractor.displayMessage(
                     "Something wrong with the department manager ID you enter.\nMake sure you enter a valid ID in the next try.\n");
@@ -123,7 +127,7 @@ public class CompanyManagementController {
             }
         }
 
-        userInteractor.displayMessage("Highest Employee Salary: " + maxSalary.toPlainString());
+        userInteractor.displayMessage("Highest Employee Salary: " + maxSalary.toPlainString() + ".\n");
         userInteractor.displayMessage(p.toString());
         return v;
     };
@@ -152,7 +156,7 @@ public class CompanyManagementController {
         }
 
         userInteractor.displayMessage("Department Manager has the most managed employee: "
-                + maxDm.getTotalManagedEmployees() + " employees.");
+                + maxDm.getTotalManagedEmployees() + " employees.\n");
         userInteractor.displayMessage(maxDm.toString());
         return v;
     };
@@ -209,7 +213,7 @@ public class CompanyManagementController {
         }
 
         userInteractor
-                .displayMessage("Director has the largest share: " + maxDirector.getSharePercentage() * 100 + "%");
+                .displayMessage("Director has the largest share: " + maxDirector.getSharePercentage() * 100 + "%\n");
         userInteractor.displayMessage(maxDirector.toString());
         return v;
     };
@@ -247,7 +251,7 @@ public class CompanyManagementController {
 
     private boolean hasAnyPersonnels(List<Personnel> personnels) {
         if (personnels == null || personnels.size() == 0) {
-            userInteractor.displayMessage("Process stopped. Currently, there is no personnel in the company data.");
+            userInteractor.displayMessage("Currently, there is no personnel in the company data.\n");
             return false;
         }
         return true;
