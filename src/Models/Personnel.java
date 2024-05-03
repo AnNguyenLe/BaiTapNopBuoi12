@@ -24,7 +24,7 @@ public abstract class Personnel {
     private String id;
     private String fullName;
     private int yearOfBirth;
-    private int phoneNumber;
+    private long phoneNumber;
     private Gender gender;
     private BigDecimal dailySalary = Constants.EMPLOYEE_DAILY_SALARY;
     private int noOfWorkingDays;
@@ -73,11 +73,11 @@ public abstract class Personnel {
         this.yearOfBirth = yearOfBirth;
     }
 
-    public int getPhoneNumber() {
+    public long getPhoneNumber() {
         return phoneNumber;
     }
 
-    public void setPhoneNumber(int phoneNumber) {
+    public void setPhoneNumber(long phoneNumber) {
         if (phoneNumber < 0) {
             throw new NegativeNumberException("Phone number");
         }
@@ -143,7 +143,7 @@ public abstract class Personnel {
                         "Year of birth must be in the range from " + minYoB + " and " + maxYoB,
                         yearOfBirth -> yearOfBirth < minYoB || yearOfBirth > maxYoB));
         setPhoneNumber(
-                interactor.readInt(
+                interactor.readLong(
                         "Phone number: ",
                         "Phone number must be number AND must be a non-negative number!",
                         phoneNumber -> phoneNumber < 0));

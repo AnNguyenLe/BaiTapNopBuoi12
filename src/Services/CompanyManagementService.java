@@ -5,11 +5,14 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
 
+import CustomExceptions.NegativeNumberException;
 import DataAccess.DataAccessable;
+import Models.Company;
 import Models.Personnel;
 
 public class CompanyManagementService implements CompanyService {
     private DataAccessable<Personnel> dataRepository;
+    private double remainingSharePercentage = 1;
 
     public CompanyManagementService(DataAccessable<Personnel> dataRepository) {
         this.dataRepository = dataRepository;
@@ -97,5 +100,19 @@ public class CompanyManagementService implements CompanyService {
                     p.getGender(),
                     p.calculateMonthlySalary());
         }
+    }
+
+    public double getRemainingSharePercentage() {
+        return remainingSharePercentage;
+    }
+
+    public void setRemainingSharePercentage(double remainingSharePercentage) {
+        if (remainingSharePercentage < 0) {
+            throw new NegativeNumberException("Company's remaining share percentage");
+        }
+        if (remainingSharePercentage > 1) {
+            throw new IllegalArgumentException("Remaining share percentage cannot be larger than 1!");
+        }
+        this.remainingSharePercentage = remainingSharePercentage;
     }
 }

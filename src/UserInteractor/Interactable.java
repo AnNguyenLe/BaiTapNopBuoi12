@@ -12,6 +12,8 @@ public interface Interactable {
 
     int readInt(String promptingMessage, String remindMessage, Predicate<Integer> predicate);
 
+    long readLong(String promptingMessage, String remindMessage, Predicate<Long> predicate);
+
     double readDouble(String promptingMessage, String remindMessage, Predicate<Double> predicate);
 
     BigDecimal readBigDecimal(String promptingMessage, String remindMessage, Predicate<BigDecimal> predicate);

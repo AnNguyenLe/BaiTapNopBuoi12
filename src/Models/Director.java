@@ -19,8 +19,9 @@ public class Director extends Personnel {
     }
 
     public void setSharePercentage(double sharePercentage) {
-        if (sharePercentage < 0 || sharePercentage > 1) {
-            throw new IllegalArgumentException("Share Percentage must be in range 0 - 1.0!");
+        double remainingSharePercentage = service.getRemainingSharePercentage();
+        if (sharePercentage < 0 || sharePercentage > remainingSharePercentage) {
+            throw new IllegalArgumentException("Share Percentage must be in range 0 - " + remainingSharePercentage + "!");
         }
         this.sharePercentage = sharePercentage;
     }
@@ -28,11 +29,12 @@ public class Director extends Personnel {
     @Override
     public void enter() {
         interactor.displayMessage("Please enter the Director information: \n");
+        double remainingSharePercentage = service.getRemainingSharePercentage();
         setSharePercentage(
                 interactor.readDouble(
-                        "Shares/Stocks Percentage ([0 - 1]): ",
-                        "Percentage must be a value between 0 and 1!",
-                        percentage -> percentage < 0 || percentage > 1));
+                        "Shares/Stocks Percentage ([0 - " + remainingSharePercentage + "]): ",
+                        "Percentage must be a value between 0 and " + remainingSharePercentage,
+                        percentage -> percentage < 0 || percentage > remainingSharePercentage));
 
         super.enter();
     }

@@ -138,5 +138,11 @@ public class Company {
                 break;
         }
         personnel.enter();
+        if (personnel instanceof Director) {
+            Director director = (Director) personnel;
+            double remainingSharePercentage = service.getRemainingSharePercentage();
+            remainingSharePercentage -= director.getSharePercentage();
+            service.setRemainingSharePercentage(remainingSharePercentage);
+        }
     }
 }

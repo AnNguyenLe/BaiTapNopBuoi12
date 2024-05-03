@@ -55,6 +55,23 @@ public class ConsoleInteractor implements ConsoleInteractable {
     }
 
     @Override
+    public long readLong(String promptingMessage, String remindMessage, Predicate<Long> predicate) {
+        boolean isValid;
+        String userInput;
+        do {
+            displayMessage(promptingMessage);
+            userInput = scanner.nextLine().trim();
+            isValid = isValidLong(userInput, predicate);
+
+            if (!isValid) {
+                displayMessage(remindMessage + "\n");
+            }
+        } while (!isValid);
+
+        return Long.parseLong(userInput);
+    }
+
+    @Override
     public double readDouble(String promptingMessage, String remindMessage, Predicate<Double> predicate) {
         boolean isValid;
         String userInput;
@@ -97,12 +114,30 @@ public class ConsoleInteractor implements ConsoleInteractable {
         }
     }
 
+    private boolean isParsableToLong(String str) {
+        try {
+            Long.parseLong(str);
+            return true;
+        } catch (NumberFormatException e) {
+            return false;
+        }
+    }
+
     private boolean isValidInt(String userInput, Predicate<Integer> falseConditionPredicate) {
         if (!isParsableToInt(userInput)) {
             return false;
         }
 
         int value = Integer.parseInt(userInput);
+        return !falseConditionPredicate.test(value);
+    }
+
+    private boolean isValidLong(String userInput, Predicate<Long> falseConditionPredicate) {
+        if (!isParsableToLong(userInput)) {
+            return false;
+        }
+
+        long value = Long.parseLong(userInput);
         return !falseConditionPredicate.test(value);
     }
 

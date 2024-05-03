@@ -23,4 +23,8 @@ public interface CompanyService {
     <T extends Personnel> List<T> getListOf(Class<T> tClass, Predicate<T> predicate);
 
     <T extends Personnel> void displayTableOfPersonnels(String title, List<T> personnels);
+
+    double getRemainingSharePercentage();
+
+    void setRemainingSharePercentage(double remainingSharePercentage);
 }
