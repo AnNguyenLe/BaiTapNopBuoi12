@@ -41,7 +41,7 @@ public class CompanyManagementApp implements ConsoleApplication {
 
     @Override
     public void run() {
-        int exitOption = actionOptions.size();
+        int exitOption = MAX_OPTION_ID;
         boolean shouldContinue = true;
         while (shouldContinue) {
             int selectedOption;

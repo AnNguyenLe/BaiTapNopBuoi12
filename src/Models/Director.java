@@ -28,12 +28,13 @@ public class Director extends Personnel {
     @Override
     public void enter() {
         interactor.displayMessage("Please enter the Director information: \n");
-        super.enter();
         setSharePercentage(
                 interactor.readDouble(
                         "Shares/Stocks Percentage ([0 - 1]): ",
                         "Percentage must be a value between 0 and 1!",
                         percentage -> percentage < 0 || percentage > 1));
+
+        super.enter();
     }
 
     @Override
