@@ -171,7 +171,7 @@ public abstract class Personnel {
         boolean hasBeenRemoved = service.removePersonnel(getId());
         if (hasBeenRemoved) {
             interactor.displayMessage(
-                    "Department Manager " + getFullName() + " with ID: " + getId() + " has been removed successfully!");
+                    "Personnel " + getFullName() + " with ID: " + getId() + " has been removed successfully!");
         }
     }
 

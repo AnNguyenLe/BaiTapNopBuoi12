@@ -13,8 +13,6 @@ public class DepartmentManager extends Personnel {
 
     private List<Employee> managedEmployees = new ArrayList<>();
 
-    private CompanyService service;
-
     public DepartmentManager(Interactable interactor, CompanyService service) {
         super(interactor, service);
         this.setDailySalary(Constants.DEPARTMENT_MANAGER_DAILY_SALARY);

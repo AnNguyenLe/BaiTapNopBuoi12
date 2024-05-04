@@ -49,7 +49,11 @@ public class CompanyManagementService implements CompanyService {
     }
 
     public Personnel findPersonnel(Predicate<Personnel> predicate) {
-        return getPersonnels().stream().filter(predicate).findFirst().orElse(null);
+        Personnel p = getPersonnels().stream().filter(predicate).findFirst().orElse(null);
+        if (p == null) {
+            return null;
+        }
+        return p;
     }
 
     public <T extends Personnel> List<T> getListOf(Class<T> tClass) {

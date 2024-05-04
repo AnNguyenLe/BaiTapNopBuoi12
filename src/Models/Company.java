@@ -115,7 +115,6 @@ public class Company {
     }
 
     public void addNewPersonel() {
-        Personnel personnel;
         int maxValidOptionId = personnelTypes.size();
         int selectedOption = interactor
                 .readInt(
@@ -125,24 +124,24 @@ public class Company {
                         optionNo -> optionNo < 1 || optionNo > maxValidOptionId);
         switch (selectedOption) {
             case 1:
-                personnel = new Employee(interactor, service);
+                Employee employee = new Employee(interactor, service);
+                employee.enter();
                 break;
             case 2:
-                personnel = new DepartmentManager(interactor, service);
+                DepartmentManager dm = new DepartmentManager(interactor, service);
+                dm.enter();
                 break;
             case 3:
-                personnel = new Director(interactor, service);
+                Director director = new Director(interactor, service);
+                director.enter();
+                BigDecimal remainingSharePercentage = service.getRemainingSharePercentage();
+                remainingSharePercentage = remainingSharePercentage.subtract(director.getSharePercentage());
+                service.setRemainingSharePercentage(remainingSharePercentage);
                 break;
             default:
-                personnel = new Employee(interactor, service);
+                Employee personnel = new Employee(interactor, service);
+                personnel.enter();
                 break;
-        }
-        personnel.enter();
-        if (personnel instanceof Director) {
-            Director director = (Director) personnel;
-            BigDecimal remainingSharePercentage = service.getRemainingSharePercentage();
-            remainingSharePercentage = remainingSharePercentage.subtract(director.getSharePercentage());
-            service.setRemainingSharePercentage(remainingSharePercentage);
         }
     }
 }

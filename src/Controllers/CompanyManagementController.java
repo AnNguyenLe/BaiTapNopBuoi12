@@ -38,25 +38,47 @@ public class CompanyManagementController {
             return v;
         }
 
+        List<DepartmentManager> departmentManagers = service.getListOf(DepartmentManager.class);
+        if (departmentManagers == null || departmentManagers.size() == 0) {
+            userInteractor.displayMessage(
+                    "There is no department manager to perform this action.\n--> SOLUTION: Add a Department Manager first.\n");
+            return v;
+        }
+
         List<Employee> unmanagedEmployees = service.getListOf(Employee.class, e -> e.getManagerId() == null);
         if (unmanagedEmployees == null || unmanagedEmployees.size() == 0) {
-            userInteractor.displayMessage("There is no unmanaged employee to perform this action.\n");
+            userInteractor.displayMessage(
+                    "There is no unmanaged employee to perform this action.\n--> SOLUTION: Add an Employee first.\n");
             return v;
         }
         service.displayTableOfPersonnels("LIST OF UNMANAGED EMPLOYEES", unmanagedEmployees);
-        String employeeId = userInteractor.readLine("Enter employee's ID you want to assign to be managed: ");
-        Personnel employee = service.findPersonnel(p -> p.getId().equals(employeeId.trim()));
+        String employeeId = userInteractor.readLine("Enter employee's ID you want to assign to be managed: ").trim();
+        if (!unmanagedEmployees.stream().anyMatch(p -> p.getId().equals(employeeId))) {
+            userInteractor.displayMessage(
+                    "You did not enter one of the employee IDs in the list!\nMake sure you enter a valid ID in the next try.\n");
+            return v;
+        }
+
+        Personnel employee = unmanagedEmployees.stream().filter(p -> p.getId().equals(employeeId)).findFirst()
+                .orElse(null);
         if (employee == null) {
             userInteractor.displayMessage(
                     "Something wrong with the employee ID you enter.\nMake sure you enter a valid ID in the next try.\n");
             return v;
         }
 
-        List<DepartmentManager> departmentManagers = service.getListOf(DepartmentManager.class);
         service.displayTableOfPersonnels("LIST OF DEPARTMENT MANAGERS", departmentManagers);
         String dmId = userInteractor
-                .readLine("Enter department manager's ID who will manage the selected employee above: ");
-        Personnel dm = service.findPersonnel(p -> p.getId().equals(dmId.trim()));
+                .readLine("Enter department manager's ID who will manage the selected employee above: ").trim();
+
+        if (!departmentManagers.stream().anyMatch(p -> p.getId().equals(dmId))) {
+            userInteractor.displayMessage(
+                    "You did not enter one of the department manager IDs in the list!\nMake sure you enter a valid ID in the next try.\n");
+            return v;
+        }
+
+        Personnel dm = departmentManagers.stream().filter(p -> p.getId().equals(dmId)).findFirst().orElse(null);
+        ;
         if (dm == null) {
             userInteractor.displayMessage(
                     "Something wrong with the department manager ID you enter.\nMake sure you enter a valid ID in the next try.\n");
@@ -71,15 +93,22 @@ public class CompanyManagementController {
         return v;
     };
     public Function<Void, Void> deletePersonnel = v -> {
-        if (!hasAnyPersonnels(service.getPersonnels())) {
+        List<Personnel> personnels = service.getPersonnels();
+
+        if (!hasAnyPersonnels(personnels)) {
             return v;
         }
 
+        service.displayTableOfPersonnels("ALL PERSONNELS OF THE COMPANY", personnels);
+
         String employeeId = userInteractor
                 .readLine("Enter ID of Employee you want to delete: ");
-        Employee employee = (Employee) service.findPersonnel(p -> p.getId().equals(employeeId));
+        Personnel employee = service.findPersonnel(p -> p.getId().equals(employeeId.trim()));
+
         if (employee == null) {
-            userInteractor.displayMessage("Process stop. Cannot find a personnel with ID " + employeeId);
+            userInteractor.displayMessage(
+                    "Something wrong with the personnel ID you enter.\nMake sure you enter a valid ID in the next try.\n");
+            userInteractor.displayMessage("Cannot find a personnel with ID: " + employeeId);
             return v;
         }
         employee.delete();
@@ -127,7 +156,7 @@ public class CompanyManagementController {
             }
         }
 
-        userInteractor.displayMessage("Highest Employee Salary: " + maxSalary.toPlainString() + ".\n");
+        userInteractor.displayMessage("Highest Employee Salary: " + p.calculateMonthlySalary().toPlainString() + "\n");
         userInteractor.displayMessage(p.toString());
         return v;
     };
@@ -213,7 +242,8 @@ public class CompanyManagementController {
         }
 
         userInteractor
-                .displayMessage("Director has the largest share: " + maxDirector.getSharePercentage().multiply(BigDecimal.valueOf(100)) + "%\n");
+                .displayMessage("Director has the largest share: "
+                        + maxDirector.getSharePercentage().multiply(BigDecimal.valueOf(100)) + "%\n");
         userInteractor.displayMessage(maxDirector.toString());
         return v;
     };

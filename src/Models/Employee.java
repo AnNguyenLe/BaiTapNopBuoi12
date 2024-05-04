@@ -7,7 +7,6 @@ import UserInteractor.Interactable;
 
 public class Employee extends Personnel {
     private String managerId;
-    private CompanyService service;
 
     public Employee(Interactable interactor, CompanyService service) {
         super(interactor, service);
@@ -45,13 +44,15 @@ public class Employee extends Personnel {
 
     @Override
     public void delete() {
-        // Update manager's managed employees list
-        Personnel personnel = service.findPersonnel(p -> p.getId().equals(managerId));
-        if (personnel != null) {
-            DepartmentManager manager = (DepartmentManager) personnel;
-            List<Employee> managedEmployees = manager.getManagedEmployees();
-            managedEmployees.removeIf(p -> p.getId().equals(getId()));
-            manager.setManagedEmployees(managedEmployees);
+        if (managerId != null) {
+            // Update manager's managed employees list
+            Personnel personnel = service.findPersonnel(p -> p.getId().equals(managerId.trim()));
+            if (personnel != null) {
+                DepartmentManager manager = (DepartmentManager) personnel;
+                List<Employee> managedEmployees = manager.getManagedEmployees();
+                managedEmployees.removeIf(p -> p.getId().equals(getId().trim()));
+                manager.setManagedEmployees(managedEmployees);
+            }
         }
 
         // Remove this Personnel in data repository
