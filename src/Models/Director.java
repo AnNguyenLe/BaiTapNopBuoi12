@@ -2,7 +2,6 @@ package Models;
 
 import java.math.BigDecimal;
 
-import Extensions.StringExtensions;
 import Services.CompanyService;
 import UserInteractor.Interactable;
 

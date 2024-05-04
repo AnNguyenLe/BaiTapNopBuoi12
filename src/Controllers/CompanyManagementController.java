@@ -7,7 +7,6 @@ import java.util.function.Function;
 import Applications.ConsoleApplication;
 import Comparators.SortByMonthSalaryDesc;
 import Comparators.SortByName;
-import Extensions.StringExtensions;
 import Models.Company;
 import Models.DepartmentManager;
 import Models.Director;
