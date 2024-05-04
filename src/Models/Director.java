@@ -2,6 +2,7 @@ package Models;
 
 import java.math.BigDecimal;
 
+import Extensions.StringExtensions;
 import Services.CompanyService;
 import UserInteractor.Interactable;
 
@@ -53,6 +54,11 @@ public class Director extends Personnel {
     }
 
     public BigDecimal calculateMonthlyIncome(Company company) {
+        if (company.getMonthlyIncome() == null) {
+            interactor.displayMessage(
+                    "Cannot perform this action. Make sure you filled in the company's information before perform calculating Director's monthly income!\n");
+            return null;
+        }
         BigDecimal profitFromShare = sharePercentage.multiply(company.calculateProfits());
         return profitFromShare.add(calculateMonthlySalary());
     }

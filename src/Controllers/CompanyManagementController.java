@@ -7,6 +7,7 @@ import java.util.function.Function;
 import Applications.ConsoleApplication;
 import Comparators.SortByMonthSalaryDesc;
 import Comparators.SortByName;
+import Extensions.StringExtensions;
 import Models.Company;
 import Models.DepartmentManager;
 import Models.Director;
@@ -249,6 +250,11 @@ public class CompanyManagementController {
     };
 
     public Function<Void, Void> calculateEveryDirectorIncome = v -> {
+        if (company.getMonthlyIncome() == null) {
+            userInteractor.displayMessage(
+                    "Cannot perform this action. Make sure you have already filled in the company's information before perform calculating Director's monthly income!\n");
+            return v;
+        }
         List<Personnel> personnels = service.getPersonnels();
         if (!hasAnyPersonnels(personnels)) {
             return v;
