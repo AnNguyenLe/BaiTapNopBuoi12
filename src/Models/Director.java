@@ -6,7 +6,7 @@ import Services.CompanyService;
 import UserInteractor.Interactable;
 
 public class Director extends Personnel {
-    private double sharePercentage;
+    private BigDecimal sharePercentage;
 
     public Director(Interactable interactor, CompanyService service) {
         super(interactor, service);
@@ -14,14 +14,15 @@ public class Director extends Personnel {
         this.setIsDirector(true);
     }
 
-    public double getSharePercentage() {
+    public BigDecimal getSharePercentage() {
         return sharePercentage;
     }
 
-    public void setSharePercentage(double sharePercentage) {
-        double remainingSharePercentage = service.getRemainingSharePercentage();
-        if (sharePercentage < 0 || sharePercentage > remainingSharePercentage) {
-            throw new IllegalArgumentException("Share Percentage must be in range 0 - " + remainingSharePercentage + "!");
+    public void setSharePercentage(BigDecimal sharePercentage) {
+        BigDecimal remainingSharePercentage = service.getRemainingSharePercentage();
+        if (sharePercentage.compareTo(BigDecimal.ZERO) < 0 || sharePercentage.compareTo(remainingSharePercentage) > 0) {
+            throw new IllegalArgumentException(
+                    "Share Percentage must be in range 0 - " + remainingSharePercentage.toPlainString() + "!");
         }
         this.sharePercentage = sharePercentage;
     }
@@ -29,12 +30,16 @@ public class Director extends Personnel {
     @Override
     public void enter() {
         interactor.displayMessage("Please enter the Director information: \n");
-        double remainingSharePercentage = service.getRemainingSharePercentage();
+        BigDecimal remainingSharePercentage = service.getRemainingSharePercentage();
         setSharePercentage(
-                interactor.readDouble(
-                        "Shares/Stocks Percentage ([0 - " + remainingSharePercentage + "]): ",
-                        "Percentage must be a value between 0 and " + remainingSharePercentage,
-                        percentage -> percentage < 0 || percentage > remainingSharePercentage));
+                interactor.readBigDecimal(
+                        "Shares/Stocks Percentage ([0 - " + remainingSharePercentage.toPlainString() + "]): ",
+                        "Remaining share/stocks percentage: "
+                                + remainingSharePercentage.multiply(BigDecimal.valueOf(100))
+                                + "%.\n" +
+                                "Percentage must be a value between 0 and " + remainingSharePercentage.toPlainString(),
+                        percentage -> percentage.compareTo(BigDecimal.ZERO) < 0
+                                || percentage.compareTo(remainingSharePercentage) > 0));
 
         super.enter();
     }
@@ -44,11 +49,11 @@ public class Director extends Personnel {
         return String.join("\n",
                 "Director information:",
                 super.toString(),
-                "Shares/Stocks Percentage: " + sharePercentage * 100 + "%");
+                "Shares/Stocks Percentage: " + sharePercentage.multiply(BigDecimal.valueOf(100)).toPlainString() + "%");
     }
 
     public BigDecimal calculateMonthlyIncome(Company company) {
-        BigDecimal profitFromShare = BigDecimal.valueOf(sharePercentage).multiply(company.calculateProfits());
+        BigDecimal profitFromShare = sharePercentage.multiply(company.calculateProfits());
         return profitFromShare.add(calculateMonthlySalary());
     }
 }

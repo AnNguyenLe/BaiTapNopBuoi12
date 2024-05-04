@@ -206,14 +206,14 @@ public class CompanyManagementController {
         for (Personnel p : personnels) {
             if (p instanceof Director) {
                 temp = (Director) p;
-                if (maxDirector.getSharePercentage() < temp.getSharePercentage()) {
+                if (maxDirector.getSharePercentage().compareTo(temp.getSharePercentage()) < 0) {
                     maxDirector = temp;
                 }
             }
         }
 
         userInteractor
-                .displayMessage("Director has the largest share: " + maxDirector.getSharePercentage() * 100 + "%\n");
+                .displayMessage("Director has the largest share: " + maxDirector.getSharePercentage().multiply(BigDecimal.valueOf(100)) + "%\n");
         userInteractor.displayMessage(maxDirector.toString());
         return v;
     };

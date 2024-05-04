@@ -1,5 +1,6 @@
 package Services;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.function.Predicate;
 
@@ -24,7 +25,7 @@ public interface CompanyService {
 
     <T extends Personnel> void displayTableOfPersonnels(String title, List<T> personnels);
 
-    double getRemainingSharePercentage();
+    BigDecimal getRemainingSharePercentage();
 
-    void setRemainingSharePercentage(double remainingSharePercentage);
+    void setRemainingSharePercentage(BigDecimal remainingSharePercentage);
 }

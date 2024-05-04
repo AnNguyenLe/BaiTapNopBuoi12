@@ -140,8 +140,8 @@ public class Company {
         personnel.enter();
         if (personnel instanceof Director) {
             Director director = (Director) personnel;
-            double remainingSharePercentage = service.getRemainingSharePercentage();
-            remainingSharePercentage -= director.getSharePercentage();
+            BigDecimal remainingSharePercentage = service.getRemainingSharePercentage();
+            remainingSharePercentage = remainingSharePercentage.subtract(director.getSharePercentage());
             service.setRemainingSharePercentage(remainingSharePercentage);
         }
     }
